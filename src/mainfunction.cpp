@@ -11,8 +11,8 @@
 #include "BouncingBallMain.h"
 #include "MyProjectMain.h"
 
-#define BASE_SCREEN_WIDTH 800
-#define BASE_SCREEN_HEIGHT 600
+#define BASE_SCREEN_WIDTH 640
+#define BASE_SCREEN_HEIGHT 480
 
 
 
