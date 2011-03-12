@@ -54,9 +54,9 @@ void BouncingBallMain::SetupBackgroundBuffer()
 //  DrawBackgroundPolygon( 400, 100, 500, 150, 600, 100, 550, 200, 450, 200, 400, 250, 0x0000ff );
 
     // Draw a polygon and some lines joining the points.
-    DrawBackgroundPolygon( 100, 100, 150, 100, 
-            250, 200, 150, 200, 
-            100, 300, 200, 275, 
+    DrawBackgroundPolygon( 100, 100, 150, 100,
+            250, 200, 150, 200,
+            100, 300, 200, 275,
             300, 325, 50, 400, 0xff00ff );
     DrawBackgroundLine( 100, 100, 150, 100, 0xffffff );
     DrawBackgroundLine( 150, 100, 250, 200, 0xffffff );
@@ -67,9 +67,9 @@ void BouncingBallMain::SetupBackgroundBuffer()
     DrawBackgroundLine( 300, 325,  50, 400, 0xffffff );
     DrawBackgroundLine(  50, 400, 100, 100, 0xffffff );
 
-    DrawBackgroundPolygon( 350, 100, 500, 150, 
-            600, 100, 550, 200, 
-            450, 200, 400, 250, 
+    DrawBackgroundPolygon( 350, 100, 500, 150,
+            600, 100, 550, 200,
+            450, 200, 400, 250,
             410, 180, 0x00ff00 );
     DrawBackgroundLine( 350, 100, 500, 150, 0xffffff );
     DrawBackgroundLine( 500, 150, 600, 100, 0xffffff );
@@ -82,20 +82,20 @@ void BouncingBallMain::SetupBackgroundBuffer()
     // Draw an image loaded from a file.
     ImageData im;
     im.LoadImage( "demo.jpg" );
-    
+
     // Note: image loaded only once, above, and now we will draw it nine times
     for ( int i = 0 ; i < 3 ; i++ )
         for ( int j = 0 ; j < 3 ; j++ )
-            im.RenderImage( this->GetBackground(), 
-                    0, 0, 
-                    i*100, j*100 + 300, 
+            im.RenderImage( this->GetBackground(),
+                    0, 0,
+                    i*100, j*100 + 300,
                     im.GetWidth(), im.GetHeight() );
 
 
     // Draw some tiles using the tile manager
 
     // Specify how many tiles wide and high
-    m.SetSize( 10, 10 ); 
+    m.SetSize( 10, 10 );
     // Specify the screen x,y of top left corner
     m.SetBaseTilesPositionOnScreen( 450, 300 );
     // Tell it to draw tiles from x1,y1 to x2,y2 in tile array,
@@ -117,13 +117,13 @@ int BouncingBallMain::InitialiseObjects()
     DestroyOldObjects();
 
     // Create a new object of type BouncingBall1
-    m_pBall1 = new BouncingBall1( this, 
-        0/*Id*/, 1/*Type*/, 
-        100/*Size*/, 
+    m_pBall1 = new BouncingBall1( this,
+        0/*Id*/, 1/*Type*/,
+        100/*Size*/,
         1/*Colour*/,
-        "A"/*Label*/, 
+        "A"/*Label*/,
         -10/*XLabelOffset*/,
-        -15/*YLabelOffset*/, 
+        -15/*YLabelOffset*/,
         &m );
 
     // Bouncing ball 1 has a movement object, tells it to move from
@@ -132,22 +132,22 @@ int BouncingBallMain::InitialiseObjects()
     m_pBall1->SetMovement( GetTime(), GetTime()+1000, GetTime(), 100, 100, 700, 500 );
 
     // Create another, different, type of ball
-    m_pBall2 = new BouncingBall2( this, 
-        0/*Id*/, 1/*Type*/, 
-        100/*Size*/, 
+    m_pBall2 = new BouncingBall2( this,
+        0/*Id*/, 1/*Type*/,
+        100/*Size*/,
         2/*Colour*/,
-        "B"/*Label*/, 
+        "B"/*Label*/,
         -10/*XLabelOffset*/,
         -15/*YLabelOffset*/ );
     m_pBall2->SetPosition( 100,100 );
     m_pBall2->SetSpeed( 1.1,1.0 );
 
     // And a third ball
-    m_pBall3 = new BouncingBall2( this, 
-        0/*Id*/, 1/*Type*/, 
-        100/*Size*/, 
+    m_pBall3 = new BouncingBall2( this,
+        0/*Id*/, 1/*Type*/,
+        100/*Size*/,
         3/*Colour*/,
-        "C"/*Label*/, 
+        "C"/*Label*/,
         -10/*XLabelOffset*/,
         -15/*YLabelOffset*/ );
     m_pBall3->SetPosition( 300,250 );
@@ -164,8 +164,8 @@ int BouncingBallMain::InitialiseObjects()
     // i.e. The LAST entry has to be NULL. The fact that it is NULL is used in order to work out where the end of the array is.
     m_ppDisplayableObjects[3] = NULL;
 
-    // NOTE: We also need to destroy the objects, but the method at the 
-    // top of this function will destroy all objects pointed at by the 
+    // NOTE: We also need to destroy the objects, but the method at the
+    // top of this function will destroy all objects pointed at by the
     // array elements so we can ignore that here.
 
     return 0;

@@ -10,9 +10,9 @@
 
 
 /** Constructor */
-BouncingBall::BouncingBall( BouncingBallMain* pEngine, int iID, 
+BouncingBall::BouncingBall( BouncingBallMain* pEngine, int iID,
                             int iDrawType, int iSize, int iColour,
-                            char* szLabel, 
+                            char* szLabel,
                             int iXLabelOffset, int iYLabelOffset)
 : DisplayableObject( pEngine )
 , m_pEngine( pEngine )
@@ -32,7 +32,7 @@ BouncingBall::BouncingBall( BouncingBallMain* pEngine, int iID,
     // Record the ball size as both height and width
     m_iDrawWidth = m_iSize;
     m_iDrawHeight = m_iSize;
-    
+
     // Just put it somewhere initially
     m_iPreviousScreenX = m_iCurrentScreenX = m_iDrawWidth;
     m_iPreviousScreenY = m_iCurrentScreenY = m_iDrawHeight;
@@ -61,7 +61,7 @@ void BouncingBall::Draw()
 
     // Choose one of 8 colours:
     switch( m_iColour % 8 )
-    { 
+    {
     case 1: uiColourMult = 0x010000; uiColourText = 0xffffff; break;
     case 2: uiColourMult = 0x000100; uiColourText = 0xffffff; break;
     case 3: uiColourMult = 0x000001; uiColourText = 0xffffff; break;
@@ -112,9 +112,9 @@ void BouncingBall::DoUpdate( int iCurrentTime )
 
 
 /** Constructor */
-BouncingBall1::BouncingBall1( BouncingBallMain* pEngine, int iID, 
+BouncingBall1::BouncingBall1( BouncingBallMain* pEngine, int iID,
                             int iDrawType, int iSize, int iColour,
-                            char* szLabel, 
+                            char* szLabel,
                             int iXLabelOffset, int iYLabelOffset,
                             TileManager* pTileManager)
 : BouncingBall( pEngine, iID, iDrawType, iSize, iColour, szLabel, iXLabelOffset, iYLabelOffset )
@@ -165,9 +165,9 @@ void BouncingBall1::DoUpdate( int iCurrentTime )
 
 
 /** Constructor */
-BouncingBall2::BouncingBall2( BouncingBallMain* pEngine, int iID, 
+BouncingBall2::BouncingBall2( BouncingBallMain* pEngine, int iID,
                             int iDrawType, int iSize, int iColour,
-                            char* szLabel, 
+                            char* szLabel,
                             int iXLabelOffset, int iYLabelOffset)
 : BouncingBall( pEngine, iID, iDrawType, iSize, iColour, szLabel, iXLabelOffset, iYLabelOffset )
 , m_dX( iSize )

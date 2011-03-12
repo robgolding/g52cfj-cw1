@@ -92,14 +92,14 @@ void BaseEngine::DestroyOldObjects()
 
 /*
 Initialise SDL and create a window of the correct size.
-*/ 
+*/
 int BaseEngine::Initialise( char* strCaption, int iScreenWidth, int iScreenHeight, char* szFontName, int iFontSize )
 {
     m_iScreenWidth = iScreenWidth;
     m_iScreenHeight = iScreenHeight;
 
     // Initialize SDL's subsystems
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) 
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
         return 1;
@@ -129,7 +129,7 @@ int BaseEngine::Initialise( char* strCaption, int iScreenWidth, int iScreenHeigh
 #ifdef WIN32
     SDL_SysWMinfo i;
     SDL_VERSION( &i.version );
-    if ( SDL_GetWMInfo ( &i ) ) 
+    if ( SDL_GetWMInfo ( &i ) )
     {
         HWND hwnd = i.window;
         SetWindowPos( hwnd, HWND_TOP, 0, 0, m_iScreenWidth, m_iScreenHeight, SWP_NOSIZE );
@@ -139,7 +139,7 @@ int BaseEngine::Initialise( char* strCaption, int iScreenWidth, int iScreenHeigh
     m_pBackgroundSurface = SDL_AllocSurface( SDL_SWSURFACE/*flags*/, m_iScreenWidth, m_iScreenHeight, 32, 0,0,0,0 );
 
     // If we fail, return error.
-    if (m_pActualScreen == NULL) 
+    if (m_pActualScreen == NULL)
     {
         fprintf(stderr, "Unable to set up video: %s\n", SDL_GetError());
         return 2;
@@ -187,7 +187,7 @@ int BaseEngine::InitialiseObjects()
 
     // Create an array one element larger than the number of objects that you want.
     // e.g.: m_ppDisplayableObjects = new DisplayableObject*[MAXNUMBER+1];
-    
+
     // You MUST set the array entry after the last one that you create to NULL, so that the system knows when to stop.
     //e.g. m_ppDisplayableObjects[0] = new MyDisplayableObject( this, m_iPlayer1StartX, m_iPlayer1StartY);
     //e.g. m_ppDisplayableObjects[1] = new MyDisplayableObject( this, m_iPlayer2StartX, m_iPlayer2StartY);
@@ -221,9 +221,9 @@ int BaseEngine::MainLoop(void)
         m_iTick = SDL_GetTicks();
 
         // Poll for events, and handle the ones we care about.
-        while (SDL_PollEvent(&event)) 
+        while (SDL_PollEvent(&event))
         {
-            switch (event.type) 
+            switch (event.type)
             {
             case SDL_KEYDOWN:
                 iKeyCode = event.key.keysym.sym;
@@ -232,7 +232,7 @@ int BaseEngine::MainLoop(void)
                 KeyDown(iKeyCode);
                 break;
 
-            case SDL_KEYUP:                  
+            case SDL_KEYUP:
                 iKeyCode = event.key.keysym.sym;
                 if ( (iKeyCode >= SDLK_FIRST) && (iKeyCode <= SDLK_LAST) )
                 {
@@ -315,7 +315,7 @@ void BaseEngine::GameRender(void)
     // Just drawn so no more redraw needed
     m_bNeedsRedraw = false;
     // Note: the redraw flags must only be set early in this method, not at the end, since the drawing/moving of the moving objects may
-    // potentially flag a win/lose condition and a state change, which will set the redraw flag again to force a full draw after the 
+    // potentially flag a win/lose condition and a state change, which will set the redraw flag again to force a full draw after the
     // state changes.
 
     if ( m_bWholeScreenUpdate )
@@ -325,17 +325,17 @@ void BaseEngine::GameRender(void)
 
         // Lock surface if needed
         if (SDL_MUSTLOCK(m_pActualScreen))
-            if (SDL_LockSurface(m_pActualScreen) < 0) 
+            if (SDL_LockSurface(m_pActualScreen) < 0)
                 return;
 
         // Draw the screen as it should appear now.
         DrawScreen();
 
         // Unlock if needed
-        if (SDL_MUSTLOCK(m_pActualScreen)) 
+        if (SDL_MUSTLOCK(m_pActualScreen))
             SDL_UnlockSurface(m_pActualScreen);
 
-        SDL_UpdateRect(m_pActualScreen, 0, 0, m_iScreenWidth, m_iScreenHeight);    
+        SDL_UpdateRect(m_pActualScreen, 0, 0, m_iScreenWidth, m_iScreenHeight);
     }
     else
     {
@@ -343,7 +343,7 @@ void BaseEngine::GameRender(void)
 
         // Lock surface if needed
         if (SDL_MUSTLOCK(m_pActualScreen))
-            if (SDL_LockSurface(m_pActualScreen) < 0) 
+            if (SDL_LockSurface(m_pActualScreen) < 0)
                 return;
 
         // Remove objects from their old positions
@@ -352,7 +352,7 @@ void BaseEngine::GameRender(void)
         DrawChanges();
 
         // Unlock if needed
-        if (SDL_MUSTLOCK(m_pActualScreen)) 
+        if (SDL_MUSTLOCK(m_pActualScreen))
             SDL_UnlockSurface(m_pActualScreen);
 
         // Work out which parts of the screen need to be updated
@@ -362,8 +362,8 @@ void BaseEngine::GameRender(void)
         if ( m_iUpdateRectsInUse >= m_iMaxObjects )
         {
             //printf( "Update whole window\n" );
-            //SDL_UpdateRect(m_pActualScreen, 0, 0, m_iScreenWidth, m_iScreenHeight);    
-            SDL_UpdateRect(m_pActualScreen, 0, 0, 0, 0);    
+            //SDL_UpdateRect(m_pActualScreen, 0, 0, m_iScreenWidth, m_iScreenHeight);
+            SDL_UpdateRect(m_pActualScreen, 0, 0, 0, 0);
         }
         else
         {
@@ -456,7 +456,7 @@ void BaseEngine::CopyAllBackgroundBuffer()
 {
     SDL_Rect rect; rect.x = 0; rect.y = 0; rect.w = m_iScreenWidth; rect.h = m_iScreenHeight;
     ::SDL_BlitSurface( m_pBackgroundSurface, &rect, m_pActualScreen, &rect );
-    //memcpy( m_pActualScreen->pixels, m_puiScreenBuffer, 
+    //memcpy( m_pActualScreen->pixels, m_puiScreenBuffer,
     //      sizeof(unsigned int) * m_iIntsPerScreenRow * m_iScreenHeight );
 }
 
@@ -507,7 +507,7 @@ void BaseEngine::KeyDown(int iKeyCode)
 void BaseEngine::MouseMoved( int iX, int iY )
 {
     //printf( "BaseEngine::MouseMoved %d, %d\n", iX, iY );
-    //DrawScreenThickLine( m_iMouseXClickedDown, m_iMouseYClickedDown, 
+    //DrawScreenThickLine( m_iMouseXClickedDown, m_iMouseYClickedDown,
     //  iX, iY, 0xff0000, 1 );
 }
 
@@ -613,7 +613,7 @@ This area will be updated on the screen - i.e. remove the background from the ol
 void BaseEngine::GetUpdateRectanglesForChangingObjects()
 {
     SDL_Rect* pRect;
-    
+
     if ( m_ppDisplayableObjects != NULL )
     {
         for ( int i = 0 ; m_ppDisplayableObjects[i] != NULL ; i++ )
@@ -742,7 +742,7 @@ unsigned int BaseEngine::GetColour(int iColourIndex)
 
 
 // Draw a string in the specified font
-void BaseEngine::DrawString(int iX, int iY, const char* pText, 
+void BaseEngine::DrawString(int iX, int iY, const char* pText,
                             unsigned int uiColour, Font* pFont, SDL_Surface* pTarget )
 {
     if ( pTarget == NULL )
@@ -767,8 +767,8 @@ void BaseEngine::DrawString(int iX, int iY, const char* pText,
 void BaseEngine::DrawTriangle(
         double fX1, double fY1,
         double fX2, double fY2,
-        double fX3, double fY3, 
-        unsigned int uiColour, 
+        double fX3, double fY3,
+        unsigned int uiColour,
         SDL_Surface* pTarget )
 {
     if ( pTarget == NULL )
@@ -786,7 +786,7 @@ void BaseEngine::DrawTriangle(
     else
     {
         // Split into two triangles. Find position on line 1-3 to split at
-        double dSplitPointY = (double)fY1 + 
+        double dSplitPointY = (double)fY1 +
             (   ( (double)((fX2-fX1)*(fY3-fY1)) )
             / (double)(fX3-fX1)   );
         DrawVerticalSidedRegion( fX1, fX2, fY1, fY2, fY1, dSplitPointY, uiColour, pTarget );
@@ -801,8 +801,8 @@ void BaseEngine::DrawTriangle(
 void BaseEngine::DrawVerticalSidedRegion(
         double fX1, double fX2,
         double fY1a, double fY2a,
-        double fY1b, double fY2b, 
-        unsigned int uiColour, 
+        double fY1b, double fY2b,
+        unsigned int uiColour,
         SDL_Surface* pTarget)
 {
     if ( pTarget == NULL )
@@ -811,7 +811,7 @@ void BaseEngine::DrawVerticalSidedRegion(
     // Ensure X1 < X2, otherwise steps will go wrong!
     // Switch the points if x and y are wrong way round
     if ( fX2 < fX1 ) { Swap(fX1,fX2); Swap(fY1a,fY2a); Swap(fY1b,fY2b);  }
-    
+
     int iXStart = (int)(fX1+0.5);
     int iXEnd = (int)(fX2+0.5);
 
@@ -839,7 +839,7 @@ void BaseEngine::DrawVerticalSidedRegion(
 }
 
 // Draw a rectangle on the specified surface
-void BaseEngine::DrawRectangle(int iX1, int iY1, int iX2, int iY2, 
+void BaseEngine::DrawRectangle(int iX1, int iY1, int iX2, int iY2,
                                       unsigned int uiColour, SDL_Surface* pTarget)
 {
     if ( pTarget == NULL )
@@ -854,7 +854,7 @@ void BaseEngine::DrawRectangle(int iX1, int iY1, int iX2, int iY2,
 }
 
 // Draw an oval on the specified surface
-void BaseEngine::DrawOval(int iX1, int iY1, int iX2, int iY2, 
+void BaseEngine::DrawOval(int iX1, int iY1, int iX2, int iY2,
                                     unsigned int uiColour, SDL_Surface* pTarget)
 {
     if ( pTarget == NULL )
@@ -868,7 +868,7 @@ void BaseEngine::DrawOval(int iX1, int iY1, int iX2, int iY2,
     double fXFactor = (double)((iX2-iX1) * (iX2-iX1))/4.0;
     double fYFactor = (double)((iY2-iY1) * (iY2-iY1))/4.0;
     double fDist;
-    
+
     for ( int iX = iX1 ; iX <= iX2 ; iX++ )
         for ( int iY = iY1 ; iY <= iY2 ; iY++ )
         {
@@ -880,8 +880,8 @@ void BaseEngine::DrawOval(int iX1, int iY1, int iX2, int iY2,
 }
 
 // Draw an oval on the specified surface
-void BaseEngine::DrawHollowOval(    int iX1, int iY1, int iX2, int iY2, 
-                                    int iX3, int iY3, int iX4, int iY4, 
+void BaseEngine::DrawHollowOval(    int iX1, int iY1, int iX2, int iY2,
+                                    int iX3, int iY3, int iX4, int iY4,
                                     unsigned int uiColour, SDL_Surface* pTarget)
 {
     if ( pTarget == NULL )
@@ -901,7 +901,7 @@ void BaseEngine::DrawHollowOval(    int iX1, int iY1, int iX2, int iY2,
     double fXFactor2 = (double)((iX4-iX3) * (iX4-iX3))/4.0;
     double fYFactor2 = (double)((iY4-iY3) * (iY4-iY3))/4.0;
     double fDist1, fDist2;
-    
+
     for ( int iX = iX1 ; iX <= iX2 ; iX++ )
         for ( int iY = iY1 ; iY <= iY2 ; iY++ )
         {
@@ -916,7 +916,7 @@ void BaseEngine::DrawHollowOval(    int iX1, int iY1, int iX2, int iY2,
 
 
 // Draw a line on the specified surface
-void BaseEngine::DrawLine(double fX1, double fY1, double fX2, double fY2, 
+void BaseEngine::DrawLine(double fX1, double fY1, double fX2, double fY2,
                         unsigned int uiColour, SDL_Surface* pTarget)
 {
     if ( pTarget == NULL )
@@ -944,7 +944,7 @@ void BaseEngine::DrawLine(double fX1, double fY1, double fX2, double fY2,
 
 
 // Draw a thick line on the specified surface
-void BaseEngine::DrawThickLine( double fX1, double fY1, double fX2, double fY2, 
+void BaseEngine::DrawThickLine( double fX1, double fY1, double fX2, double fY2,
                              unsigned int uiColour, int iThickness, SDL_Surface* pTarget)
 {
     if ( pTarget == NULL )
@@ -979,7 +979,7 @@ void BaseEngine::DrawThickLine( double fX1, double fY1, double fX2, double fY2,
 
 
 // Draw a polygon on the specified surface
-void BaseEngine::DrawPolygon( 
+void BaseEngine::DrawPolygon(
         int iPoints, double* pXArray, double* pYArray,
         unsigned int uiColour, SDL_Surface* pTarget)
 {
@@ -1079,9 +1079,9 @@ void BaseEngine::DrawPolygon(
             if ( !bPointIsWithinTriangle )
             {// If not then try the next position
                 printf( "Draw for points %d, %d, %d of %d available\n", i1, i2, i3, iPoints );
-                DrawTriangle( pXArray[i1], pYArray[i1], pXArray[i2], pYArray[i2], 
+                DrawTriangle( pXArray[i1], pYArray[i1], pXArray[i2], pYArray[i2],
                             pXArray[i3], pYArray[i3], /*GetColour(iPoints)*/uiColour, pTarget );
-                // Remove the point i2 and then recurse         
+                // Remove the point i2 and then recurse
                 for ( int i = i2 ; i < (iPoints-1) ; i++ )
                 {
                     printf( "\tCopy point %d to %d\n", i+1, i );

@@ -2,12 +2,12 @@
 #include "displayableobject.h"
 
 class DisplayableArc :
-	public DisplayableObject
+    public DisplayableObject
 {
 public:
 
-	DisplayableArc(void)
-	{
-	}
+    DisplayableArc(void)
+    {
+    }
 
 };
