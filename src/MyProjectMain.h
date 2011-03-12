@@ -3,13 +3,13 @@
 
 #include "BaseEngine.h"
 
-#include "TileManager.h"
+#include "MyTileManager.h"
 
 class MyProjectMain :
 	public BaseEngine
 {
 protected:
-	TileManager m_oTileManager;
+	MyTileManager m_oTileManager;
 
 public:
 

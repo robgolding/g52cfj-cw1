@@ -119,22 +119,20 @@ void MyProjectMain::SetupBackgroundBuffer()
 {
     FillBackground( 0 );
 
-/*
-for ( int iX = 0 ; iX < GetScreenWidth() ; iX++ )
-        for ( int iY = 0 ; iY < this->GetScreenHeight() ; iY++ )
-            switch( rand()%100 )
-            {
-            case 0: SetBackgroundPixel( iX, iY, 0xFF0000 ); break;
-            case 1: SetBackgroundPixel( iX, iY, 0x00FF00 ); break;
-            case 2: SetBackgroundPixel( iX, iY, 0x0000FF ); break;
-            case 3: SetBackgroundPixel( iX, iY, 0xFFFF00 ); break;
-            case 4: SetBackgroundPixel( iX, iY, 0x00FFFF ); break;
-            case 5: SetBackgroundPixel( iX, iY, 0xFF00FF ); break;
-        }
-*/
+    m_oTileManager.SetSize(
+            GetScreenWidth() / m_oTileManager.GetTileWidth(),
+            GetScreenHeight() / m_oTileManager.GetTileHeight()
+    ); 
+    // Specify the screen x,y of top left corner
+    m_oTileManager.SetBaseTilesPositionOnScreen( 0, 0 );
+    // Tell it to draw tiles from x1,y1 to x2,y2 in tile array,
+    // to the background of this screen
+    m_oTileManager.DrawAllTiles( this, this->GetBackground(), 0, 0,
+            m_oTileManager.GetWidth() - 1,
+            m_oTileManager.GetHeight() - 1
+    );
+
 }
-
-
 /*
 In here you need to create any movable objects that you wish to use.
 Sub-classes need to implement this function.
@@ -153,8 +151,8 @@ int MyProjectMain::InitialiseObjects()
 
     // You MUST set the array entry after the last one that you create to NULL, so that the system knows when to stop.
     // i.e. The LAST entry has to be NULL. The fact that it is NULL is used in order to work out where the end of the array is.
-    //m_ppDisplayableObjects[0] = new SimpleShape(this);
-    m_ppDisplayableObjects[0] = NULL;
+    m_ppDisplayableObjects[0] = new SimpleShape(this);
+    m_ppDisplayableObjects[1] = NULL;
 
     return 0;
 }

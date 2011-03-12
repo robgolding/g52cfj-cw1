@@ -1,6 +1,6 @@
 CXX=g++
-CXXFLAGS=-Wall -pedantic-errors -g $$(sdl-config --cflags --libs) -lSDL_image -lSDL_ttf
-SOURCES=BaseEngine.cpp BouncingBall.cpp BouncingBallMain.cpp DisplayableObject.cpp FontManager.cpp JPGImage.cpp mainfunction.cpp MyProjectMain.cpp TileManager.cpp
+CXXFLAGS=-g $$(sdl-config --cflags --libs) -lSDL_image -lSDL_ttf
+SOURCES=BaseEngine.cpp BouncingBall.cpp BouncingBallMain.cpp DisplayableObject.cpp FontManager.cpp JPGImage.cpp mainfunction.cpp MyProjectMain.cpp TileManager.cpp MyTileManager.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=game
 
@@ -14,3 +14,6 @@ clean:
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+run: $(EXECUTABLE)
+	./$(EXECUTABLE)
