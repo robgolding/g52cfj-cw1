@@ -1,8 +1,4 @@
-#if defined(_MSC_VER)
-#include "SDL.h"
-#else
-#include "SDL/SDL.h"
-#endif
+#include "header.h"
 
 #include "BaseEngine.h"
 

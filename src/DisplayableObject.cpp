@@ -1,8 +1,5 @@
-#if defined(_MSC_VER)
-#include "SDL.h"
-#else
-#include "SDL/SDL.h"
-#endif
+#include "header.h"
+
 
 #include "BaseEngine.h"
 
@@ -47,7 +44,7 @@ void DisplayableObject::Draw()
     StoreLastScreenPositionAndUpdateRect();
 }
 
-void DisplayableObject::StoreLastScreenPositionAndUpdateRect()
+void DisplayableObject::StoreLastScreenPositionAndUpdateRect() 
 {
     // Our initial rectangle that needs updating is the current screen position
     int x1 = m_iCurrentScreenX + m_iStartDrawPosX;
@@ -80,12 +77,12 @@ void DisplayableObject::StoreLastScreenPositionAndUpdateRect()
 void DisplayableObject::RedrawBackground()
 {
     // Copy the background pixels back over.
-    m_pEngine->CopyBackgroundPixels( m_iPreviousScreenX + m_iStartDrawPosX,
+    m_pEngine->CopyBackgroundPixels( m_iPreviousScreenX + m_iStartDrawPosX, 
         m_iPreviousScreenY + m_iStartDrawPosY, m_iDrawWidth, m_iDrawHeight );
 }
 
 
-void DisplayableObject::GetRedrawRect( SDL_Rect *pRect )
+void DisplayableObject::GetRedrawRect( SDL_Rect *pRect ) 
 {
     // Now set up the rectangle
     pRect->x = m_iXUpdateRect;

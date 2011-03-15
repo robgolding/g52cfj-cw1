@@ -1,10 +1,4 @@
-#if defined(_MSC_VER)
-#include "SDL.h"
-#include <SDL_TTF.h>
-#else
-#include "SDL/SDL.h"
-#include <SDL_TTF.h>
-#endif
+#include "header.h"
 
 #include "FontManager.h"
 
@@ -17,12 +11,16 @@ FontManager::FontManager(void)
 , m_iArraySize(0)
 , m_bInitialised(false)
 {
+    // Hard-coded to size 20 initially, uses GrowArray later
     m_iArraySize = 20;
     m_pArrayFonts = new Font*[ m_iArraySize ];
 }
 
 FontManager::~FontManager(void)
 {
+    for ( int i = 0; i < m_iFontCount ; i++ )
+        delete m_pArrayFonts[i];
+    delete [] m_pArrayFonts;
 }
 
 /* Get pointer to a (possibly new) font object. FontManager retains ownership!!!! */

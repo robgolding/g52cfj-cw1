@@ -1,5 +1,7 @@
 #pragma once
 
+#include "BaseEngine.h"
+
 class TileManager
 {
 public:
@@ -16,6 +18,9 @@ public:
     // Destructor
     ~TileManager(void)
     {
+        if ( m_pData != NULL )
+            delete [] m_pData;
+        m_pData = NULL;
     }
 
     // Re-size, and zero all values
@@ -121,7 +126,6 @@ public:
 
     // Draw a tile at a location on the screen determined by the tile
     // position and the base X and Y co-ordinates
-    // OVERRIDE THIS TO DRAW YOUR TILE!!!
     virtual void DrawTile(
         BaseEngine* pEngine, SDL_Surface* pSurface,
         int iTileX, int iTileY )
@@ -137,7 +141,9 @@ public:
 //
 public:
 
-    // Draw a tile
+    // Draw a tile at a location on the screen determined by the tile
+    // position and the base X and Y co-ordinates
+    // OVERRIDE THIS TO DRAW YOUR TILE!!!
     virtual void DrawTileAt(
         BaseEngine* pEngine,
         SDL_Surface* pSurface,

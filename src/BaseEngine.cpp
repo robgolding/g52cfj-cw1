@@ -1,10 +1,7 @@
+#include "header.h"
+
 #if defined(_MSC_VER)
-#include "SDL.h"
-#include <SDL_TTF.h>
 #include <SDL_syswm.h>
-#else
-#include "SDL/SDL.h"
-#include <SDL_TTF.h>
 #endif
 
 #include <math.h>
@@ -67,6 +64,7 @@ Destructor - destroys moving objects
 BaseEngine::~BaseEngine(void)
 {
     DestroyOldObjects();
+    delete [] m_pUpdateRectangles;
 }
 
 /* Destroy any existing displayable objects */
@@ -165,7 +163,7 @@ int BaseEngine::Initialise( char* strCaption, int iScreenWidth, int iScreenHeigh
 Initialise game-specific things.
 Base class just calls InitialiseObjects() to create the moving objects
 */
-int BaseEngine::GameInit(void)
+int BaseEngine::GameInit()
 {
     // Create the moving objects
     InitialiseObjects();
@@ -385,6 +383,7 @@ void BaseEngine::GameRender(void)
 void BaseEngine::DrawScreen()
 {
     // First draw the background
+    //this->CopyBackgroundPixels( 100, 100, 100, 100 );
     CopyAllBackgroundBuffer();
     // And finally, draw the text
     DrawStrings();
