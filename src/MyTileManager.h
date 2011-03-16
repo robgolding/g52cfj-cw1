@@ -17,9 +17,6 @@ public:
 
     virtual int GetWidth();
 
-    virtual void DrawTile(BaseEngine* pEngine, SDL_Surface* pSurface,
-            int iTileX, int iTileY );
-
     virtual void DrawTileAt(BaseEngine* pEngine, SDL_Surface* pSurface,
             int iMapX, int iMapY, int iStartPositionScreenX,
             int iStartPositionScreenY );

@@ -103,8 +103,6 @@ public:
         m_iCurrentScreenX = (int)(m_dX+0.5);
         m_iCurrentScreenY = (int)(m_dY+0.5);
 
-        printf("Position %f, %f\n", m_dX, m_dY );
-
         // Ensure that the object gets redrawn on the display, if something changed
         RedrawObjects();
     }
@@ -119,12 +117,19 @@ void MyProjectMain::SetupBackgroundBuffer()
 {
     FillBackground( 0 );
 
-    m_oTileManager.SetSize(
-            GetScreenWidth() / m_oTileManager.GetTileWidth(),
-            GetScreenHeight() / m_oTileManager.GetTileHeight()
-    ); 
+    int tileWidth = GetScreenWidth() / m_oTileManager.GetTileWidth();
+    int tileHeight = GetScreenHeight() / m_oTileManager.GetTileHeight();
+
+    m_oTileManager.SetSize(tileWidth, tileHeight);
+
     // Specify the screen x,y of top left corner
     m_oTileManager.SetBaseTilesPositionOnScreen( 0, 0 );
+
+
+    for ( int x = 0 ; x < tileWidth ; x++ )
+        for ( int y = 0 ; y < tileHeight ; y++ )
+            m_oTileManager.SetValue( x, y, rand()%41 );
+
     // Tell it to draw tiles from x1,y1 to x2,y2 in tile array,
     // to the background of this screen
     m_oTileManager.DrawAllTiles( this, this->GetBackground(), 0, 0,
