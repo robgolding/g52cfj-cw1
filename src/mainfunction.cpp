@@ -5,6 +5,7 @@
 // Needs one of the following #includes, to include the class definition
 #include "BouncingBallMain.h"
 #include "MyProjectMain.h"
+#include "Demo3Main.h"
 
 #define BASE_SCREEN_WIDTH 800
 #define BASE_SCREEN_HEIGHT 600
@@ -26,10 +27,10 @@ int main(int argc, char *argv[])
     {
         // Needs just one of the two following lines:
         //BouncingBallMain oMain;
-        MyProjectMain oMain;
+        //MyProjectMain oMain;
         //Demo2Main oMain;
         //Demo2aMain oMain;
-        //Demo3Main oMain;
+        Demo3Main oMain;
 
         char buf[1024];
         sprintf( buf, "My Demonstration Program : Size %d x %d", BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT );
