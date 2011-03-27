@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-g $$(sdl-config --cflags --libs) -lSDL_image -lSDL_ttf
-SOURCES=BaseEngine.cpp DisplayableObject.cpp FontManager.cpp TileManager.cpp JPGImage.cpp mainfunction.cpp PacmanMain.cpp PacmanTileManager.cpp PacmanEnemy.cpp
+SOURCES=BaseEngine.cpp DisplayableObject.cpp FontManager.cpp TileManager.cpp JPGImage.cpp mainfunction.cpp PacmanMain.cpp PacmanTileManager.cpp PacmanPlayer.cpp PacmanEnemy.cpp
 
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=game

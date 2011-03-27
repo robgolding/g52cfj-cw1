@@ -4,12 +4,12 @@
 
 class PacmanMain;
 
-class PacmanEnemy :
+class PacmanPlayer :
     public DisplayableObject
 {
 public:
-    PacmanEnemy(PacmanMain* pEngine, int iMapX, int iMapY);
-    ~PacmanEnemy(void);
+    PacmanPlayer(PacmanMain* pEngine, int iMapX, int iMapY);
+    ~PacmanPlayer(void);
 
     void Draw();
     void DoUpdate( int iCurrentTime );
@@ -45,4 +45,5 @@ private:
     int m_iMapX;
     int m_iMapY;
     int m_iDir;
+    int m_iNextDir;
 };

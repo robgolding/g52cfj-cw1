@@ -1,13 +1,9 @@
 #include "header.h"
-
 #include "BaseEngine.h"
-
 #include "PacmanMain.h"
-
+#include "PacmanPlayer.h"
 #include "PacmanEnemy.h"
-
 #include "JPGImage.h"
-
 #include "TileManager.h"
 
 
@@ -89,7 +85,7 @@ int PacmanMain::InitialiseObjects()
     m_ppDisplayableObjects = new DisplayableObject*[6]; // i.e. 1 object
 
     // You MUST set the array entry after the last one that you create to NULL, so that the system knows when to stop.
-    m_ppDisplayableObjects[0] = new PacmanEnemy(this,1,1);
+    m_ppDisplayableObjects[0] = new PacmanPlayer(this,1,1);
     m_ppDisplayableObjects[1] = new PacmanEnemy(this,9,9);
     m_ppDisplayableObjects[2] = new PacmanEnemy(this,13,9);
     m_ppDisplayableObjects[3] = new PacmanEnemy(this,9,5);
