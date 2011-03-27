@@ -146,17 +146,6 @@ for ( int iObjectId = 0 ;
             break;
         }
 
-        // Allow some control over the object by the player
-        if ( m_pMainEngine->IsKeyPressed( SDLK_UP ) )
-            m_iDir = 0;
-        if ( m_pMainEngine->IsKeyPressed( SDLK_RIGHT ) )
-            m_iDir = 1;
-        if ( m_pMainEngine->IsKeyPressed( SDLK_DOWN ) )
-            m_iDir = 2;
-        if ( m_pMainEngine->IsKeyPressed( SDLK_LEFT ) )
-            m_iDir = 3;
-
-
         switch ( tm.GetValue(
                 m_iMapX + GetXDiffForDirection(m_iDir),
                 m_iMapY + GetYDiffForDirection(m_iDir) ) )

@@ -119,30 +119,6 @@ for ( int iObjectId = 0 ;
             break;
         }
 
-        // Set off a new movement
-        /*
-        switch( rand() % 10 )
-        {
-        case 0: // Increase dir by 1
-            m_iDir = ( m_iDir + 1 )%4;
-            break;
-        case 1: // Reduce dir by 1
-            m_iDir = ( m_iDir + 3 )%4;
-            break;
-        }
-        */
-
-        /*
-        if ( m_pMainEngine->IsKeyPressed( SDLK_UP ) )
-            m_iDir = 0;
-        if ( m_pMainEngine->IsKeyPressed( SDLK_RIGHT ) )
-            m_iDir = 1;
-        if ( m_pMainEngine->IsKeyPressed( SDLK_DOWN ) )
-            m_iDir = 2;
-        if ( m_pMainEngine->IsKeyPressed( SDLK_LEFT ) )
-            m_iDir = 3;
-        */
-
         switch ( tm.GetValue( 
                 m_iMapX + GetXDiffForDirection(m_iNextDir),
                 m_iMapY + GetYDiffForDirection(m_iNextDir) ) )
