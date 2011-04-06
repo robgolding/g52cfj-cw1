@@ -1,34 +1,14 @@
 #include "header.h"
 
+#include "PacmanObject.h"
 #include "PacmanMain.h"
 #include "PacmanPlayer.h"
+#include "PacmanEnemy.h"
+
 
 PacmanPlayer::PacmanPlayer(PacmanMain* pEngine, int iMapX, int iMapY)
-: DisplayableObject(pEngine)
-, m_pMainEngine( pEngine )
-, m_iMapX(iMapX)
-, m_iMapY(iMapY)
-, m_iDir(0)
+: PacmanObject(pEngine, iMapX, iMapY)
 , m_iNextDir(0)
-{
-    // The ball coordinate will be the centre of the ball
-    // Because we start drawing half the size to the top-left.
-    m_iStartDrawPosX = -25;
-    m_iStartDrawPosY = -25;
-
-    // Record the ball size as both height and width
-    m_iDrawWidth = 50;
-    m_iDrawHeight = 50;
-
-    // Out item at specific coordinates
-    m_iPreviousScreenX = m_iCurrentScreenX = iMapX*50+25+25;
-    m_iPreviousScreenY = m_iCurrentScreenY = iMapY*50+25+40;
-
-    // And make it visible
-    SetVisible(true);
-}
-
-PacmanPlayer::~PacmanPlayer(void)
 {
 }
 
@@ -58,7 +38,7 @@ void PacmanPlayer::Draw()
     StoreLastScreenPositionAndUpdateRect();
 }
 
-void PacmanPlayer::DoUpdate( int iCurrentTime )
+void PacmanPlayer::DoUpdate(int iCurrentTime)
 {
     m_iPreviousScreenX = m_iCurrentScreenX;
     m_iPreviousScreenY = m_iCurrentScreenY;
@@ -90,7 +70,11 @@ void PacmanPlayer::DoUpdate( int iCurrentTime )
         if ( ((iXDiff*iXDiff)+(iYDiff*iYDiff))
                 < ((iSizeOther+iSize)*(iSizeOther+iSize)) )
         {
-            printf("Collision");
+            PacmanEnemy* enemy = dynamic_cast<PacmanEnemy*>(pObject);
+            if (enemy != NULL && enemy->IsVisible())
+                m_pMainEngine->CollisionDetected(this, enemy);
+            else
+                printf("Collided with something that isn't a (visible) PacmanEnemy!\n");
         }
     }
 
@@ -163,13 +147,13 @@ void PacmanPlayer::DoUpdate( int iCurrentTime )
         }
     }
 
-    if ( m_pMainEngine->IsKeyPressed( SDLK_UP ) )
+    if (m_pMainEngine->IsKeyPressed(SDLK_UP))
         m_iNextDir = 0;
-    if ( m_pMainEngine->IsKeyPressed( SDLK_RIGHT ) )
+    if (m_pMainEngine->IsKeyPressed(SDLK_RIGHT))
         m_iNextDir = 1;
-    if ( m_pMainEngine->IsKeyPressed( SDLK_DOWN ) )
+    if (m_pMainEngine->IsKeyPressed(SDLK_DOWN))
         m_iNextDir = 2;
-    if ( m_pMainEngine->IsKeyPressed( SDLK_LEFT ) )
+    if (m_pMainEngine->IsKeyPressed(SDLK_LEFT))
         m_iNextDir = 3;
 
     // If making a move then do the move
@@ -183,4 +167,8 @@ void PacmanPlayer::DoUpdate( int iCurrentTime )
 
     // Ensure that the object gets redrawn on the display, if something changed
     RedrawObjects();
+}
+
+void PacmanPlayer::CollidedWith(PacmanEnemy* enemy)
+{
 }

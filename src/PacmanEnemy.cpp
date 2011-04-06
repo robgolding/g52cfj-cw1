@@ -4,30 +4,7 @@
 #include "PacmanEnemy.h"
 
 PacmanEnemy::PacmanEnemy(PacmanMain* pEngine, int iMapX, int iMapY)
-: DisplayableObject(pEngine)
-, m_pMainEngine( pEngine )
-, m_iMapX(iMapX)
-, m_iMapY(iMapY)
-, m_iDir(0)
-{
-    // The ball coordinate will be the centre of the ball
-    // Because we start drawing half the size to the top-left.
-    m_iStartDrawPosX = -25;
-    m_iStartDrawPosY = -25;
-
-    // Record the ball size as both height and width
-    m_iDrawWidth = 50;
-    m_iDrawHeight = 50;
-
-    // Out item at specific coordinates
-    m_iPreviousScreenX = m_iCurrentScreenX = iMapX*50+25+25;
-    m_iPreviousScreenY = m_iCurrentScreenY = iMapY*50+25+40;
-
-    // And make it visible
-    SetVisible(true);
-}
-
-PacmanEnemy::~PacmanEnemy(void)
+: PacmanObject(pEngine, iMapX, iMapY)
 {
 }
 
@@ -88,6 +65,7 @@ void PacmanEnemy::DoUpdate( int iCurrentTime )
             iSize = 10 + (30-iFrame);
         int iSizeOther = iSize; // Assume both the same size
 
+        /*
         // Pythagorus' theorum:
         if ( ((iXDiff*iXDiff)+(iYDiff*iYDiff))
                 < ((iSizeOther+iSize)*(iSizeOther+iSize)) )
@@ -111,6 +89,7 @@ void PacmanEnemy::DoUpdate( int iCurrentTime )
             RedrawObjects();
             return;
         }
+        */
     }
 
     // If movement has finished

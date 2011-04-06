@@ -3,9 +3,10 @@
 #include "BaseEngine.h"
 #include "TileManager.h"
 #include "PacmanTileManager.h"
+#include "PacmanPlayer.h"
+#include "PacmanEnemy.h"
 
-class PacmanMain :
-    public BaseEngine
+class PacmanMain : public BaseEngine
 {
 public:
     PacmanMain(void);
@@ -15,23 +16,25 @@ public:
     int InitialiseObjects();
     void DrawStrings();
     void GameAction();
-    void MouseDown( int iButton, int iX, int iY );
+    void MouseDown(int iButton, int iX, int iY);
     void KeyDown(int iKeyCode);
+    int GameInit();
 
-    // Get a reference to the current tile manager
+    void CollisionDetected(PacmanPlayer* player, PacmanEnemy* enemy);
+    void LoseLife();
+
     PacmanTileManager& GetTileManager() { return m_oTiles; }
 
-private:
-    PacmanTileManager m_oTiles;
-
-public:
-    // State number
-    enum State { stateInit, stateMain, statePaused };
+    enum State { stateInit, stateMain, statePaused, stateLifeLost };
 
     void DrawScreen();
     void DrawChanges();
 
 private:
+    PacmanTileManager m_oTiles;
     State m_state;
+    PacmanPlayer* m_pPlayer;
+    PacmanEnemy** m_ppEnemies;
+    int m_iLives;
 };
 
