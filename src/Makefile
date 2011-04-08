@@ -1,6 +1,17 @@
-CXX=g++
-CXXFLAGS=-g $$(sdl-config --cflags --libs) -lSDL_image -lSDL_ttf
-SOURCES=BaseEngine.cpp DisplayableObject.cpp FontManager.cpp TileManager.cpp JPGImage.cpp mainfunction.cpp PacmanMain.cpp PacmanTileManager.cpp PacmanObject.cpp PacmanPlayer.cpp PacmanEnemy.cpp
+CXX = g++
+CXXFLAGS = -g $$(sdl-config --cflags --libs) -lSDL_image -lSDL_ttf
+SOURCES = \
+		  BaseEngine.cpp \
+		  DisplayableObject.cpp \
+		  FontManager.cpp \
+		  JPGImage.cpp \
+		  mainfunction.cpp \
+		  PacmanEnemy.cpp \
+		  PacmanMain.cpp \
+		  PacmanObject.cpp \
+		  PacmanPlayer.cpp \
+		  PacmanTileManager.cpp \
+		  TileManager.cpp
 
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=game
@@ -13,7 +24,7 @@ $(EXECUTABLE): $(OBJECTS)
 clean:
 	rm -f $(OBJECTS) $(EXECUTABLE)
 
-.cpp.o:
+%.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 run: $(EXECUTABLE)
