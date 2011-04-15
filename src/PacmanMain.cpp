@@ -24,74 +24,72 @@ PacmanMain::~PacmanMain(void)
 
 void PacmanMain::SetupBackgroundBuffer()
 {
-    // NEW SWITCH
-    switch( m_state )
+    switch(m_state)
     {
-    case stateInit: // Reload the level data
-        FillBackground( 0xffff00 );
-        {
-            char* data[] = {
-                "bbbbbbbbbbbbbbb",
-                "baeaeadadaeaeab",
-                "babcbcbcbcbibeb",
-                "badadgdadhdadhb",
-                "bgbcbcbcbibcbeb",
-                "badadadadadadab",
-                "bfbcbibcbcbcbeb",
-                "bahadadhdadadab",
-                "bfbcbcbibcbibeb",
-                "badadadadadadab",
-                "bbbbbbbbbbbbbbb"
-            };
-
-            // Specify how many tiles wide and high
-            m_oTiles.SetSize( 15, 11 );
-            // Set up the tiles
-            for ( int x = 0 ; x < 15 ; x++ )
-                for ( int y = 0 ; y < 11 ; y++ )
-                    m_oTiles.SetValue( x, y, data[y][x]-'a' );
-
-            for ( int y = 0 ; y < 11 ; y++ )
+        case stateInit:
+            FillBackground(0xffff00);
             {
-                for ( int x = 0 ; x < 15 ; x++ )
-                    printf("%d ", m_oTiles.GetValue(x,y) );
-                printf("\n" );
-            }
+                char* data[] = {
+                    "bbbbbbbbbbbbbbb",
+                    "baeaeadadaeaeab",
+                    "babcbcbcbcbibeb",
+                    "badadgdadhdadhb",
+                    "bgbcbcbcbibcbeb",
+                    "badadadadadadab",
+                    "bfbcbibcbcbcbeb",
+                    "bahadadhdadadab",
+                    "bfbcbcbibcbibeb",
+                    "badadadadadadab",
+                    "bbbbbbbbbbbbbbb"
+                };
 
-            // Specify the screen x,y of top left corner
-            m_oTiles.SetBaseTilesPositionOnScreen( 25, 40 );
-        }
-        return;
-    case stateMain:
-        FillBackground( 0 );
-        // Tell it to draw tiles from x1,y1 to x2,y2 in tile array,
-        // to the background of this screen
-        m_oTiles.DrawAllTiles( this,
-            this->GetBackground(),
-            0, 0, 14, 10 );
-        break; // Drop out to the complicated stuff
-    case statePaused:
-    case stateLifeLost:
-        FillBackground( 0 );
-        m_oTiles.DrawAllTiles( this,
-            this->GetBackground(),
-            0, 0, 14, 10 );
-        break;
-    } // End switch
+                m_oTiles.SetSize( 15, 11 );
+
+                for ( int x = 0 ; x < 15 ; x++ )
+                    for ( int y = 0 ; y < 11 ; y++ )
+                        m_oTiles.SetValue( x, y, data[y][x]-'a' );
+
+                for ( int y = 0 ; y < 11 ; y++ )
+                {
+                    for ( int x = 0 ; x < 15 ; x++ )
+                        printf("%d ", m_oTiles.GetValue(x,y) );
+                    printf("\n" );
+                }
+
+                m_oTiles.SetBaseTilesPositionOnScreen( 25, 40 );
+            }
+            return;
+        case stateMain:
+            FillBackground(0x000000);
+            m_oTiles.DrawAllTiles(this,
+                    this->GetBackground(),
+                    0, 0, 14, 10
+                    );
+            break;
+        case statePaused:
+        case stateLifeLost:
+            FillBackground(0x000000);
+            m_oTiles.DrawAllTiles(this,
+                    this->GetBackground(),
+                    0, 0, 14, 10
+                    );
+            break;
+    }
 }
 
 int PacmanMain::InitialiseObjects()
 {
-    // Record the fact that we are about to change the array - so it doesn't get used elsewhere without reloading it
+    // Record the fact that we are about to change the array - so it doesn't
+    // get used elsewhere without reloading it
     DrawableObjectsChanged();
 
     // Destroy any existing objects
     DestroyOldObjects();
 
-    int iNumEnemies = 0;
+    int iNumEnemies = 4;
 
-    // Create an array one element larger than the number of objects that you want.
-    m_ppDisplayableObjects = new DisplayableObject*[iNumEnemies + 2]; // i.e. 1 object
+    // Create an array one element larger than the number of objects
+    m_ppDisplayableObjects = new DisplayableObject*[iNumEnemies + 2];
     m_ppEnemies = new PacmanEnemy*[iNumEnemies+1];
 
     PacmanPlayer* pPlayer = new PacmanPlayer(this, 1, 1);
@@ -101,14 +99,8 @@ int PacmanMain::InitialiseObjects()
 
     for (int i=0; i<iNumEnemies; i++)
     {
-        int x = 0, y = 0;
-        while (m_oTiles.GetValue(x, y) == 1)
-        {
-            x = rand()%15; // hard coded tile width
-            y = rand()%11; // hard coded tile height
-        }
-
-        PacmanEnemy* pEnemy = new PacmanEnemy(this, x, y);
+        int iX = (m_oTiles.GetMapWidth() / 2) - (iNumEnemies / 2) + i;
+        PacmanEnemy* pEnemy = new PacmanEnemy(this, iX, 5);
         m_ppEnemies[i] = pEnemy;
         m_ppDisplayableObjects[i+1] = pEnemy;
     }
@@ -129,26 +121,26 @@ void PacmanMain::DrawStrings()
     switch( m_state )
     {
         case stateInit:
-            CopyBackgroundPixels( 0/*X*/, 280/*Y*/, GetScreenWidth(), 40/*Height*/ );
+            CopyBackgroundPixels(0, 280, GetScreenWidth(), 40);
             DrawScreenString( 100, 300, "Initialised and waiting for SPACE", 0x0, NULL );
-            SetNextUpdateRect( 0/*X*/, 280/*Y*/, GetScreenWidth(), 40/*Height*/ );
+            SetNextUpdateRect(0, 280, GetScreenWidth(), 40);
             break;
         case stateMain:
             char buf[10]; // no more than 99 lives!
-            CopyBackgroundPixels( 0/*X*/, 0/*Y*/, GetScreenWidth(), 30/*Height*/ );
+            CopyBackgroundPixels(0, 0, GetScreenWidth(), 30);
             sprintf(buf, "Lives: %d", m_iLives);
-            DrawScreenString( 25, 7, buf, 0xffffff, NULL );
-            SetNextUpdateRect( 0/*X*/, 0/*Y*/, GetScreenWidth(), 30/*Height*/ );
+            DrawScreenString(25, 7, buf, 0xffffff, NULL);
+            SetNextUpdateRect(0, 0, GetScreenWidth(), 30);
             break;
         case statePaused:
-            CopyBackgroundPixels( 0/*X*/, 280/*Y*/, GetScreenWidth(), 40/*Height*/ );
-            DrawScreenString( 200, 300, "Paused. Press SPACE to continue", 0xffffff, NULL );
-            SetNextUpdateRect( 0/*X*/, 280/*Y*/, GetScreenWidth(), 40/*Height*/ );
+            CopyBackgroundPixels(0, 280, GetScreenWidth(), 40);
+            DrawScreenString(200, 300, "Paused. Press SPACE to continue", 0xffffff, NULL );
+            SetNextUpdateRect(0, 280, GetScreenWidth(), 40);
             break;
         case stateLifeLost:
-            CopyBackgroundPixels( 0/*X*/, 280/*Y*/, GetScreenWidth(), 40/*Height*/ );
-            DrawScreenString( 200, 300, "Life lost! Press SPACE to continue", 0xffffff, NULL );
-            SetNextUpdateRect( 0/*X*/, 280/*Y*/, GetScreenWidth(), 50/*Height*/ );
+            CopyBackgroundPixels(0, 280, GetScreenWidth(), 40);
+            DrawScreenString(200, 300, "Life lost! Press SPACE to continue", 0xffffff, NULL );
+            SetNextUpdateRect(0, 280, GetScreenWidth(), 50);
             break;
     }
 }
@@ -253,16 +245,14 @@ void PacmanMain::DrawChanges()
     DrawChangingObjects();
 }
 
-/* Draw the screen - copy the background buffer, then draw the text and objects. */
 void PacmanMain::DrawScreen()
 {
     // First draw the background
-    //this->CopyBackgroundPixels( 100, 100, 100, 100 );
     CopyAllBackgroundBuffer();
-    // And finally, draw the text
+
+    // Then draw the text
     DrawStrings();
 
-    // NEW IF
     if ( m_state == stateInit )
         return; // Do not draw objects if initialising
 
@@ -270,6 +260,7 @@ void PacmanMain::DrawScreen()
     DrawChangingObjects();
 }
 
+// A collision has been detected between the player `player' and enemy `enemy'
 void PacmanMain::CollisionDetected(PacmanPlayer* player, PacmanEnemy* enemy)
 {
     LoseLife();
