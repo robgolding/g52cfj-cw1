@@ -86,7 +86,7 @@ int PacmanMain::InitialiseObjects()
     // Destroy any existing objects
     DestroyOldObjects();
 
-    int iNumEnemies = 4;
+    int iNumEnemies = 3;
 
     // Create an array one element larger than the number of objects
     m_ppDisplayableObjects = new DisplayableObject*[iNumEnemies + 2];

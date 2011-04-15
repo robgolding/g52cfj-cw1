@@ -24,6 +24,7 @@ public:
     void LoseLife();
 
     PacmanTileManager& GetTileManager() { return m_oTiles; }
+    PacmanPlayer& GetPlayer() { return *m_pPlayer; }
 
     enum State { stateInit, stateMain, statePaused, stateLifeLost };
 
