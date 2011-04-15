@@ -40,9 +40,29 @@ void PacmanPlayer::Draw()
 
 void PacmanPlayer::DoUpdate(int iCurrentTime)
 {
-    m_iPreviousScreenX = m_iCurrentScreenX;
-    m_iPreviousScreenY = m_iCurrentScreenY;
+    int iNextDir = -1;
+    if (m_pMainEngine->IsKeyPressed(SDLK_UP))
+        iNextDir = 0;
+    if (m_pMainEngine->IsKeyPressed(SDLK_RIGHT))
+        iNextDir = 1;
+    if (m_pMainEngine->IsKeyPressed(SDLK_DOWN))
+        iNextDir = 2;
+    if (m_pMainEngine->IsKeyPressed(SDLK_LEFT))
+        iNextDir = 3;
 
+    if (iNextDir >= 0)
+        RequestNewDirection(iNextDir, iCurrentTime);
+
+    PacmanObject::DoUpdate(iCurrentTime);
+    DetectCollision(iCurrentTime);
+}
+
+void PacmanPlayer::CollidedWith(PacmanEnemy* enemy)
+{
+}
+
+void PacmanPlayer::DetectCollision(int iCurrentTime)
+{
     // Iterate through the objects
     // We are looking for one which is too close to us
     DisplayableObject* pObject;
@@ -77,98 +97,83 @@ void PacmanPlayer::DoUpdate(int iCurrentTime)
                 printf("Collided with something that isn't a (visible) PacmanEnemy!\n");
         }
     }
-
-    // If movement has finished
-    if ( m_oMover.HasMovementFinished(iCurrentTime) )
-    {
-        PacmanTileManager& tm = m_pMainEngine->GetTileManager();
-
-        // Handle any tile that we just moved onto
-        switch ( tm.GetValue( m_iMapX, m_iMapY ) )
-        {
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-                tm.UpdateTile( m_pMainEngine, m_iMapX, m_iMapY, 
-                        tm.GetValue( m_iMapX, m_iMapY ) + 1 );
-                break;
-            case 8:
-                tm.UpdateTile( m_pMainEngine, m_iMapX, m_iMapY, 0 );
-                break;
-        }
-
-        switch ( tm.GetValue( 
-                    m_iMapX + GetXDiffForDirection(m_iNextDir),
-                    m_iMapY + GetYDiffForDirection(m_iNextDir) ) )
-        {
-            case 0: // Passageway
-            case 2: // Pellet
-            case 3: // Pellet
-            case 4: // Pellet
-            case 5: // Pellet
-            case 6: // Pellet
-            case 7: // Pellet
-            case 8: // Pellet
-                m_iDir = m_iNextDir;
-                break;
-            case 1: // Wall
-                break;
-        }
-
-        switch ( tm.GetValue( 
-                    m_iMapX + GetXDiffForDirection(m_iDir),
-                    m_iMapY + GetYDiffForDirection(m_iDir) ) )
-        {
-            case 0: // Passageway
-            case 2: // Pellet
-            case 3: // Pellet
-            case 4: // Pellet
-            case 5: // Pellet
-            case 6: // Pellet
-            case 7: // Pellet
-            case 8: // Pellet
-                // Allow move - set up new movement now
-                m_iMapX += GetXDiffForDirection(m_iDir);
-                m_iMapY += GetYDiffForDirection(m_iDir);
-
-                m_oMover.Setup( 
-                        m_iCurrentScreenX,
-                        m_iCurrentScreenY,
-                        m_iMapX *50 + 25 + 25,
-                        m_iMapY *50 + 25 + 40,
-                        iCurrentTime,
-                        iCurrentTime+400+rand()%200 );
-                break;  
-            case 1: // Wall
-                break;
-        }
-    }
-
-    if (m_pMainEngine->IsKeyPressed(SDLK_UP))
-        m_iNextDir = 0;
-    if (m_pMainEngine->IsKeyPressed(SDLK_RIGHT))
-        m_iNextDir = 1;
-    if (m_pMainEngine->IsKeyPressed(SDLK_DOWN))
-        m_iNextDir = 2;
-    if (m_pMainEngine->IsKeyPressed(SDLK_LEFT))
-        m_iNextDir = 3;
-
-    // If making a move then do the move
-    if ( !m_oMover.HasMovementFinished(iCurrentTime) )
-    {
-        // Ask the mover where the object should be
-        m_oMover.Calculate( iCurrentTime );
-        m_iCurrentScreenX = m_oMover.GetX();
-        m_iCurrentScreenY = m_oMover.GetY();
-    }
-
-    // Ensure that the object gets redrawn on the display, if something changed
-    RedrawObjects();
 }
 
-void PacmanPlayer::CollidedWith(PacmanEnemy* enemy)
+void PacmanPlayer::HandleMovementFinished(int iCurrentTime)
 {
+    PacmanTileManager& tm = m_pMainEngine->GetTileManager();
+
+    // Handle the tile that we just moved onto
+    switch ( tm.GetValue( m_iMapX, m_iMapY ) )
+    {
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+            tm.UpdateTile( m_pMainEngine, m_iMapX, m_iMapY, 
+                    tm.GetValue( m_iMapX, m_iMapY ) + 1 );
+            break;
+        case 8:
+            tm.UpdateTile( m_pMainEngine, m_iMapX, m_iMapY, 0 );
+            break;
+    }
+
+    // Are we allowed to move onto the tile requested?
+    if (tm.GetValue(m_iMapX + GetXDiffForDirection(m_iNextDir),
+                m_iMapY + GetYDiffForDirection(m_iNextDir)) != 1)
+    {
+        m_iDir = m_iNextDir;
+    }
+
+    // Are we allowed to move onto the tile?
+    if (tm.GetValue(m_iMapX + GetXDiffForDirection(m_iDir),
+                m_iMapY + GetYDiffForDirection(m_iDir)) != 1)
+    {
+        // Allow move - set up new movement now
+        m_iMapX += GetXDiffForDirection(m_iDir);
+        m_iMapY += GetYDiffForDirection(m_iDir);
+
+        m_oMover.Setup(
+                m_iCurrentScreenX,
+                m_iCurrentScreenY,
+                m_iMapX *50 + 25 + 25,
+                m_iMapY *50 + 25 + 40,
+                iCurrentTime,
+                iCurrentTime+500);
+    }
+}
+
+void PacmanPlayer::HandleMovementNotFinished(int iCurrentTime)
+{
+    PacmanObject::HandleMovementNotFinished(iCurrentTime);
+}
+
+void PacmanPlayer::RequestNewDirection(int iDirection, int iCurrentTime)
+{
+    if (m_oMover.HasMovementFinished(iCurrentTime))
+    {
+        m_iDir = m_iNextDir = iDirection;
+        return;
+    }
+
+    if (iDirection != m_iNextDir)
+    {
+        if (abs(iDirection - m_iDir) == 2)
+        {
+            // go in the opposite direction
+            m_iDir = m_iNextDir = iDirection;
+
+            m_iMapX += GetXDiffForDirection(m_iDir);
+            m_iMapY += GetYDiffForDirection(m_iDir);
+
+            m_oMover.Reverse(iCurrentTime);
+        }
+        else
+        {
+            // request a "normal" change of direction
+            m_iNextDir = iDirection;
+        }
+    }
 }

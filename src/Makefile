@@ -8,6 +8,7 @@ SOURCES = \
 		  mainfunction.cpp \
 		  PacmanEnemy.cpp \
 		  PacmanMain.cpp \
+		  PacmanMover.cpp \
 		  PacmanObject.cpp \
 		  PacmanPlayer.cpp \
 		  PacmanTileManager.cpp \

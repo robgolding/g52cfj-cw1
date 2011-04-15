@@ -32,6 +32,19 @@ PacmanObject::~PacmanObject(void)
 {
 }
 
+void PacmanObject::DoUpdate(int iCurrentTime)
+{
+    m_iPreviousScreenX = m_iCurrentScreenX;
+    m_iPreviousScreenY = m_iCurrentScreenY;
+
+    if (m_oMover.HasMovementFinished(iCurrentTime))
+        HandleMovementFinished(iCurrentTime);
+    else
+        HandleMovementNotFinished(iCurrentTime);
+
+    RedrawObjects();
+}
+
 int PacmanObject::GetXDiffForDirection(int iDir)
 {
     switch(iDir % 4)
@@ -60,4 +73,15 @@ void PacmanObject::MoveTo(int iMapX, int iMapY)
 {
     m_iMapX = iMapX;
     m_iMapY = iMapY;
+}
+
+void PacmanObject::HandleMovementFinished(int iCurrentTime)
+{
+}
+
+void PacmanObject::HandleMovementNotFinished(int iCurrentTime)
+{
+    m_oMover.Calculate(iCurrentTime);
+    m_iCurrentScreenX = m_oMover.GetX();
+    m_iCurrentScreenY = m_oMover.GetY();
 }

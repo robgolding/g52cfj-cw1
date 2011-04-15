@@ -6,5 +6,7 @@ class PacmanEnemy : public PacmanObject
     public:
         PacmanEnemy(PacmanMain* pEngine, int iMapX, int iMapY);
         void Draw();
-        void DoUpdate(int iCurrentTime);
+    protected:
+        void HandleMovementFinished(int iCurrentTime);
+        void HandleMovementNotFinished(int iCurrentTime);
 };
