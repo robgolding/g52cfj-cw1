@@ -13,6 +13,8 @@ public:
     virtual int GetTileHeight();
     virtual int GetMapWidth();
     virtual int GetMapHeight();
+    virtual int GetBaseScreenX();
+    virtual int GetBaseScreenY();
     virtual void DrawTileAt(BaseEngine* pEngine, SDL_Surface* pSurface,
         int iMapX, int iMapY,
         int iStartPositionScreenX, int iStartPositionScreenY);

@@ -11,20 +11,12 @@ PacmanObject::PacmanObject(PacmanMain* pEngine, int iMapX, int iMapY)
 , m_iMapY(iMapY)
 , m_iDir(0)
 {
-    // The ball coordinate will be the centre of the ball
-    // Because we start drawing half the size to the top-left.
-    m_iStartDrawPosX = -25;
-    m_iStartDrawPosY = -25;
+    m_iDrawWidth = m_pMainEngine->GetTileManager().GetTileWidth();
+    m_iDrawHeight = m_pMainEngine->GetTileManager().GetTileHeight();
 
-    // Record the ball size as both height and width
-    m_iDrawWidth = 50;
-    m_iDrawHeight = 50;
+    m_iPreviousScreenX = m_iCurrentScreenX = GetScreenPosForMapX(iMapX);
+    m_iPreviousScreenY = m_iCurrentScreenY = GetScreenPosForMapY(iMapY);
 
-    // Out item at specific coordinates
-    m_iPreviousScreenX = m_iCurrentScreenX = iMapX*50+25+25;
-    m_iPreviousScreenY = m_iCurrentScreenY = iMapY*50+25+40;
-
-    // And make it visible
     SetVisible(true);
 }
 
@@ -43,6 +35,57 @@ void PacmanObject::DoUpdate(int iCurrentTime)
         HandleMovementNotFinished(iCurrentTime);
 
     RedrawObjects();
+}
+
+void PacmanObject::RedrawBackground()
+{
+    m_pEngine->CopyBackgroundPixels(m_iPreviousScreenX - m_iDrawWidth / 2 - 1,
+        m_iPreviousScreenY - m_iDrawHeight / 2 - 1, m_iDrawWidth + 2, m_iDrawHeight + 2);
+}
+
+void PacmanObject::GetRedrawRect(SDL_Rect *pRect)
+{
+    pRect->x = m_iXUpdateRect;
+    pRect->y = m_iYUpdateRect;
+    pRect->w = m_iWUpdateRect;
+    pRect->h = m_iHUpdateRect;
+}
+
+void PacmanObject::StoreLastScreenPositionAndUpdateRect()
+{
+    // Our initial rectangle that needs updating is the current screen position
+    //int x1 = m_iCurrentScreenX - m_iDrawWidth / 2 - 1;
+    //int x2 = m_iCurrentScreenX + m_iDrawWidth / 2 + 1;
+    //int y1 = m_iCurrentScreenY - m_iDrawHeight / 2 - 1;
+    //int y2 = m_iCurrentScreenY + m_iDrawHeight / 2 + 1;
+
+    int* box = GetBoundingBox();
+    int x1 = box[0];
+    int y1 = box[1];
+    int x2 = box[2];
+    int y2 = box[3];
+
+    static int i = 0;
+    // The screen area changed is the previous position + the new position
+    // so grow the rectangle according to the previous position of the object
+    if (m_iPreviousScreenX < m_iCurrentScreenX)
+        x1 = m_iPreviousScreenX - m_iDrawWidth / 2 - 1;
+    if (m_iPreviousScreenX > m_iCurrentScreenX)
+        x2 = m_iPreviousScreenX + m_iDrawWidth / 2 + 1;
+    if (m_iPreviousScreenY < m_iCurrentScreenY)
+        y1 = m_iPreviousScreenY - m_iDrawHeight / 2 - 1;
+    if (m_iPreviousScreenY > m_iCurrentScreenY)
+        y2 = m_iPreviousScreenY + m_iDrawHeight / 2 + 1;
+
+    // Now set up the rectangle
+    m_iXUpdateRect = x1;
+    m_iWUpdateRect = x2 - x1;
+    m_iYUpdateRect = y1;
+    m_iHUpdateRect = y2 - y1;
+
+    // Store the location that was last drawn at, so that it can be removed again
+    m_iPreviousScreenX = m_iCurrentScreenX;
+    m_iPreviousScreenY = m_iCurrentScreenY;
 }
 
 int PacmanObject::GetXDiffForDirection(int iDir)
@@ -69,10 +112,51 @@ int PacmanObject::GetYDiffForDirection(int iDir)
     }
 }
 
+int* PacmanObject::GetBoundingBox()
+{
+    int x1 = m_iCurrentScreenX - m_iDrawWidth / 2 - 1;
+    int x2 = m_iCurrentScreenX + m_iDrawWidth / 2 + 1;
+    int y1 = m_iCurrentScreenY - m_iDrawHeight / 2 - 1;
+    int y2 = m_iCurrentScreenY + m_iDrawHeight / 2 + 1;
+
+    int* box = new int[4];
+
+    box[0] = x1;
+    box[1] = y1;
+    box[2] = x2;
+    box[3] = y2;
+
+    return box;
+}
+
 void PacmanObject::MoveTo(int iMapX, int iMapY)
 {
     m_iMapX = iMapX;
     m_iMapY = iMapY;
+}
+
+int PacmanObject::GetXCentre()
+{
+    return m_iCurrentScreenX;
+}
+
+int PacmanObject::GetYCentre()
+{
+    return m_iCurrentScreenY;
+}
+
+int PacmanObject::GetScreenPosForMapX(int iMapX)
+{
+    int iTileWidth = m_pMainEngine->GetTileManager().GetTileWidth();
+    int iBaseScreenX = m_pMainEngine->GetTileManager().GetBaseScreenX();
+    return iMapX * iTileWidth + iBaseScreenX + m_iDrawWidth / 2;
+}
+
+int PacmanObject::GetScreenPosForMapY(int iMapY)
+{
+    int iTileHeight = m_pMainEngine->GetTileManager().GetTileHeight();
+    int iBaseScreenY = m_pMainEngine->GetTileManager().GetBaseScreenY();
+    return iMapY * iTileHeight + iBaseScreenY + m_iDrawHeight / 2;
 }
 
 void PacmanObject::HandleMovementFinished(int iCurrentTime)

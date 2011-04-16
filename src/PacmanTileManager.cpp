@@ -12,12 +12,22 @@ PacmanTileManager::~PacmanTileManager(void)
 
 int PacmanTileManager::GetTileWidth()
 {
-    return 50;
+    return 30;
 }
 
 int PacmanTileManager::GetTileHeight()
 {
-    return 50;
+    return 30;
+}
+
+int PacmanTileManager::GetBaseScreenX()
+{
+    return m_iBaseScreenX;
+}
+
+int PacmanTileManager::GetBaseScreenY()
+{
+    return m_iBaseScreenY;
 }
 
 int PacmanTileManager::GetMapWidth()

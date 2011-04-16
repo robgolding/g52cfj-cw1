@@ -5,7 +5,6 @@
 #include "PacmanPlayer.h"
 #include "PacmanEnemy.h"
 
-
 PacmanPlayer::PacmanPlayer(PacmanMain* pEngine, int iMapX, int iMapY)
 : PacmanObject(pEngine, iMapX, iMapY)
 , m_iNextDir(0)
@@ -17,17 +16,11 @@ void PacmanPlayer::Draw()
     if ( !IsVisible() )
         return;
 
-    int iTick = m_pMainEngine->GetTime() / 20; // 1 per 20ms
-    int iFrame = iTick % 30;
-    int iSize = 10 + iFrame;
-    if (iFrame > 15)
-        iSize = 10 + (30 - iFrame);
-
     m_pMainEngine->DrawScreenOval(
-            m_iCurrentScreenX - iSize,
-            m_iCurrentScreenY - iSize,
-            m_iCurrentScreenX + iSize-1,
-            m_iCurrentScreenY + iSize-1,
+            m_iCurrentScreenX - m_iDrawWidth / 2,
+            m_iCurrentScreenY - m_iDrawHeight / 2,
+            m_iCurrentScreenX + m_iDrawWidth / 2,
+            m_iCurrentScreenY + m_iDrawHeight / 2,
             0xffff00);
 
     StoreLastScreenPositionAndUpdateRect();
@@ -60,6 +53,8 @@ void PacmanPlayer::DetectCollision(int iCurrentTime)
 {
     DisplayableObject* pObject;
 
+    int myRadius = (GetBoundingBox()[2] - GetBoundingBox()[0]) / 2;
+
     for (int iObjectId = 0;
             (pObject = m_pMainEngine->GetDisplayableObject(iObjectId)) != NULL;
             iObjectId++)
@@ -67,26 +62,22 @@ void PacmanPlayer::DetectCollision(int iCurrentTime)
         if (pObject == this)
             continue;
 
-        int iXDiff = pObject->GetXCentre() - m_iCurrentScreenX;
-        int iYDiff = pObject->GetYCentre() - m_iCurrentScreenY;
-
-        // Estimate the size - by re-calculating it
-        int iTick = iCurrentTime / 20; // 1 per 20ms
-        int iFrame = iTick % 30;
-        int iSize = 10 + iFrame;
-        if (iFrame > 15)
-            iSize = 10 + (30 - iFrame);
-        int iSizeOther = iSize; // Assume both the same size
-
-        // Pythagoras' theorem:
-        if ( ((iXDiff*iXDiff)+(iYDiff*iYDiff))
-                < ((iSizeOther+iSize)*(iSizeOther+iSize)))
+        PacmanObject* pPacmanObject = dynamic_cast<PacmanObject*>(pObject);
+        if (pPacmanObject != NULL && pPacmanObject->IsVisible())
         {
-            PacmanEnemy* enemy = dynamic_cast<PacmanEnemy*>(pObject);
-            if (enemy != NULL && enemy->IsVisible())
-                m_pMainEngine->CollisionDetected(this, enemy);
-            else
-                printf("Collided with something that isn't a (visible) PacmanEnemy!\n");
+            int otherRadius = (pPacmanObject->GetBoundingBox()[2] -
+                    pPacmanObject->GetBoundingBox()[0]) / 2;
+            int iXDiff = pPacmanObject->GetXCentre() - m_iCurrentScreenX;
+            int iYDiff = pPacmanObject->GetYCentre() - m_iCurrentScreenY;
+
+            if ( ((iXDiff*iXDiff)+(iYDiff*iYDiff))
+                < ((myRadius + otherRadius)*(myRadius + otherRadius)))
+            {
+                PacmanEnemy* enemy = dynamic_cast<PacmanEnemy*>(pPacmanObject);
+                if (enemy != NULL && enemy->IsVisible())
+                    m_pMainEngine->CollisionDetected(this, enemy);
+                return;
+            }
         }
     }
 }
@@ -129,8 +120,8 @@ void PacmanPlayer::HandleMovementFinished(int iCurrentTime)
         m_oMover.Setup(
                 m_iCurrentScreenX,
                 m_iCurrentScreenY,
-                m_iMapX * 50 + 25 + 25,
-                m_iMapY * 50 + 25 + 40,
+                GetScreenPosForMapX(m_iMapX),
+                GetScreenPosForMapY(m_iMapY),
                 iCurrentTime,
                 iCurrentTime + 500);
     }

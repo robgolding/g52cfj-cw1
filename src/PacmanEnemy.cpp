@@ -13,17 +13,11 @@ void PacmanEnemy::Draw()
     if ( !IsVisible() )
         return;
 
-    int iTick = m_pMainEngine->GetTime() / 20; // 1 per 20ms
-    int iFrame = iTick % 30;
-    int iSize = 10 + iFrame;
-    if (iFrame > 15)
-        iSize = 10 + (30 - iFrame);
-
     m_pMainEngine->DrawScreenOval(
-            m_iCurrentScreenX - iSize,
-            m_iCurrentScreenY - iSize,
-            m_iCurrentScreenX + iSize-1,
-            m_iCurrentScreenY + iSize-1,
+            m_iCurrentScreenX - m_iDrawWidth / 2,
+            m_iCurrentScreenY - m_iDrawHeight / 2,
+            m_iCurrentScreenX + m_iDrawWidth / 2,
+            m_iCurrentScreenY + m_iDrawHeight / 2,
             0x00ffff);
 
     StoreLastScreenPositionAndUpdateRect();
@@ -75,8 +69,8 @@ void PacmanEnemy::HandleMovementFinished(int iCurrentTime)
             m_oMover.Setup(
                     m_iCurrentScreenX,
                     m_iCurrentScreenY,
-                    m_iMapX * 50 + 25 + 25,
-                    m_iMapY * 50 + 25 + 40,
+                    GetScreenPosForMapX(m_iMapX),
+                    GetScreenPosForMapY(m_iMapY),
                     iCurrentTime,
                     iCurrentTime+700);
             break;
