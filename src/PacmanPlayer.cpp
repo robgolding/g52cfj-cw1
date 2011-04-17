@@ -136,7 +136,7 @@ void PacmanPlayer::RequestNewDirection(int iDirection, int iCurrentTime)
 {
     if (m_oMover.HasMovementFinished(iCurrentTime))
     {
-        m_iDir = m_iNextDir = iDirection;
+        m_iNextDir = iDirection;
         return;
     }
 
