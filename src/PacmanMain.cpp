@@ -7,7 +7,6 @@
 #include "JPGImage.h"
 #include "TileManager.h"
 
-
 PacmanMain::PacmanMain(void)
 : BaseEngine( 50 )
 , m_state(stateInit)
@@ -24,46 +23,18 @@ PacmanMain::~PacmanMain(void)
 
 void PacmanMain::SetupBackgroundBuffer()
 {
+
     switch(m_state)
     {
         case stateInit:
             FillBackground(0xffff00);
-            {
-                char* data[] = {
-                    "bbbbbbbbbbbbbbb",
-                    "baeaeadadaeaeab",
-                    "babcbcbcbcbibeb",
-                    "badadgdadhdadhb",
-                    "bgbcbcbcbibcbeb",
-                    "badadadadadadab",
-                    "bfbcbibcbcbcbeb",
-                    "bahadadhdadadab",
-                    "bfbcbcbibcbibeb",
-                    "badadadadadadab",
-                    "bbbbbbbbbbbbbbb"
-                };
-
-                m_oTiles.SetSize( 15, 11 );
-
-                for ( int x = 0 ; x < 15 ; x++ )
-                    for ( int y = 0 ; y < 11 ; y++ )
-                        m_oTiles.SetValue( x, y, data[y][x]-'a' );
-
-                for ( int y = 0 ; y < 11 ; y++ )
-                {
-                    for ( int x = 0 ; x < 15 ; x++ )
-                        printf("%d ", m_oTiles.GetValue(x,y) );
-                    printf("\n" );
-                }
-
-                m_oTiles.SetBaseTilesPositionOnScreen( 25, 40 );
-            }
+            m_oTiles.LoadMapFromFile("map.txt");
             return;
         case stateMain:
             FillBackground(0x000000);
             m_oTiles.DrawAllTiles(this,
                     this->GetBackground(),
-                    0, 0, 14, 10
+                    0, 0, m_oTiles.GetMapWidth() - 1, m_oTiles.GetMapHeight() - 1
                     );
             break;
         case statePaused:
@@ -71,7 +42,7 @@ void PacmanMain::SetupBackgroundBuffer()
             FillBackground(0x000000);
             m_oTiles.DrawAllTiles(this,
                     this->GetBackground(),
-                    0, 0, 14, 10
+                    0, 0, m_oTiles.GetMapWidth() - 1, m_oTiles.GetMapHeight() - 1
                     );
             break;
     }
@@ -86,7 +57,7 @@ int PacmanMain::InitialiseObjects()
     // Destroy any existing objects
     DestroyOldObjects();
 
-    int iNumEnemies = 3;
+    int iNumEnemies = 4;
 
     // Create an array one element larger than the number of objects
     m_ppDisplayableObjects = new DisplayableObject*[iNumEnemies + 2];

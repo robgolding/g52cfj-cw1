@@ -9,6 +9,7 @@ public:
     PacmanTileManager(void);
     ~PacmanTileManager(void);
 
+    virtual int LoadMapFromFile(char* filename);
     virtual int GetTileWidth();
     virtual int GetTileHeight();
     virtual int GetMapWidth();
