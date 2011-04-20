@@ -2,63 +2,12 @@
 
 #include "PacmanTileManager.h"
 
-#include <iostream>
-#include <fstream>
-using namespace std;
-
 PacmanTileManager::PacmanTileManager(void)
 {
 }
 
 PacmanTileManager::~PacmanTileManager(void)
 {
-}
-
-int PacmanTileManager::LoadMapFromFile(char* filename)
-{
-    int width = -1;
-    int height = 0;
-    char line[255];
-    char* data[255];
-    ifstream in(filename);
-
-    if (in.is_open())
-    {
-        while (in.good())
-        {
-            in.getline(line, 255);
-            if (strlen(line) == 0)
-                continue;
-            data[height] = new char[strlen(line)+1];
-            strcpy(data[height], line);
-            ++height;
-            if (width == -1 || strlen(line) < width)
-                width = strlen(line);
-        }
-        in.close();
-    }
-    else
-    {
-        cout << "Cannot open file.\n";
-        return 1;
-    }
-
-    SetBaseTilesPositionOnScreen(25, 40);
-    SetSize(width, height);
-
-    char value;
-    for (int y=0; y<height; ++y)
-    {
-        for (int x=0; x<width; ++x)
-        {
-            value = data[y][x] - 'a';
-            SetValue(x, y, value);
-            printf("%c ", data[y][x]);
-        }
-        printf("\n");
-    }
-
-    return 0;
 }
 
 int PacmanTileManager::GetTileWidth()

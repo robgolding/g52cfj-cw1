@@ -14,6 +14,8 @@ public:
 
     void SetupBackgroundBuffer();
     int InitialiseObjects();
+    virtual int LoadMapFromFile(char* filename);
+
     void DrawStrings();
     void GameAction();
     void MouseDown(int iButton, int iX, int iY);
@@ -26,7 +28,7 @@ public:
     PacmanTileManager& GetTileManager() { return m_oTiles; }
     PacmanPlayer& GetPlayer() { return *m_pPlayer; }
 
-    enum State { stateInit, stateMain, statePaused, stateLifeLost };
+    enum State {stateInit, stateMain, statePaused, stateLifeLost, stateGameOver};
 
     void DrawScreen();
     void DrawChanges();
@@ -37,5 +39,6 @@ private:
     PacmanPlayer* m_pPlayer;
     PacmanEnemy** m_ppEnemies;
     int m_iLives;
+    int m_iNumEnemies;
 };
 
