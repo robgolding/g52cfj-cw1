@@ -90,7 +90,6 @@ int PacmanMain::LoadMapFromFile(char* filename)
     ifstream in(filename);
 
     m_iNumEnemies = 0;
-    m_ppEnemies = new PacmanEnemy*[10];
 
     if (in.is_open())
     {
@@ -104,6 +103,9 @@ int PacmanMain::LoadMapFromFile(char* filename)
             ++height;
             if (width == -1 || strlen(line) < width)
                 width = strlen(line);
+            for(int i=0; i<strlen(line); i++)
+                if (line[i] == 'e')
+                    ++m_iNumEnemies;
         }
         in.close();
     }
@@ -113,10 +115,13 @@ int PacmanMain::LoadMapFromFile(char* filename)
         return 1;
     }
 
+    m_ppEnemies = new PacmanEnemy*[m_iNumEnemies+1];
+
     m_oTiles.SetBaseTilesPositionOnScreen(25, 40);
     m_oTiles.SetSize(width, height);
 
     char value;
+    int iEnemyNumber = 0;
     for (int y=0; y<height; ++y)
     {
         for (int x=0; x<width; ++x)
@@ -129,11 +134,13 @@ int PacmanMain::LoadMapFromFile(char* filename)
             if (value == 'p')
                 m_oTiles.SetValue(x, y, 2); // pellet
             if (value == 'e')
-                m_ppEnemies[m_iNumEnemies++] = new PacmanEnemy(this, x, y);
+                m_ppEnemies[iEnemyNumber++] = new PacmanEnemy(this, x, y);
             printf("%c ", data[y][x]);
         }
         printf("\n");
     }
+
+    m_ppEnemies[iEnemyNumber] = NULL;
 
     return 0;
 }
@@ -182,7 +189,6 @@ void PacmanMain::GameAction()
     // Don't act for another 10 ticks
     SetTimeToAct(1);
 
-    // NEW SWITCH
     switch(m_state)
     {
     case stateInit:
@@ -310,14 +316,12 @@ void PacmanMain::CollisionDetected(PacmanPlayer* player, PacmanEnemy* enemy)
 void PacmanMain::LoseLife()
 {
     --m_iLives; // so much faster than post-increment!
-    PacmanEnemy* pEnemy;
-    int i = 0;
-    while ((pEnemy = m_ppEnemies[i]) != NULL)
+    for (int i=0; m_ppDisplayableObjects[i] != NULL; i++)
     {
-        pEnemy->SetVisible(false);
-        i++;
+        printf("Invisiblating enemy #%d\n", i);
+        m_ppDisplayableObjects[i]->SetVisible(false);
     }
-    InitialiseObjects();
+    GameInit();
     Redraw(true);
     if (m_iLives > 0)
         m_state = stateLifeLost;

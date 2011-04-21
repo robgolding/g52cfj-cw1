@@ -72,7 +72,7 @@ void PacmanEnemy::HandleMovementFinished(int iCurrentTime)
                     GetScreenPosForMapX(m_iMapX),
                     GetScreenPosForMapY(m_iMapY),
                     iCurrentTime,
-                    iCurrentTime+700);
+                    iCurrentTime+400);
             break;
         case 1: // Wall
             m_iDir = rand()%4; // Rotate randomly

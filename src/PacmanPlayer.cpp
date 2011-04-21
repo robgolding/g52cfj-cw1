@@ -123,7 +123,7 @@ void PacmanPlayer::HandleMovementFinished(int iCurrentTime)
                 GetScreenPosForMapX(m_iMapX),
                 GetScreenPosForMapY(m_iMapY),
                 iCurrentTime,
-                iCurrentTime + 500);
+                iCurrentTime + 300);
     }
 }
 
