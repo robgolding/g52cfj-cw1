@@ -19,7 +19,6 @@ PacmanMain::PacmanMain(void)
 , m_iLives(5)
 , m_iNumEnemies(0)
 {
-    printf("Init. Lives: %d\n", m_iLives);
 }
 
 PacmanMain::~PacmanMain(void)
@@ -320,7 +319,6 @@ void PacmanMain::LoseLife()
     --m_iLives; // so much faster than post-increment!
     for (int i=0; m_ppDisplayableObjects[i] != NULL; i++)
     {
-        printf("Invisiblating enemy #%d\n", i);
         m_ppDisplayableObjects[i]->SetVisible(false);
     }
     GameInit();
