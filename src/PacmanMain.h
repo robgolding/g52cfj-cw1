@@ -24,6 +24,7 @@ public:
 
     void CollisionDetected(PacmanPlayer* player, PacmanEnemy* enemy);
     void LoseLife();
+    void AtePellet();
 
     PacmanTileManager& GetTileManager() { return m_oTiles; }
     PacmanPlayer& GetPlayer() { return *m_pPlayer; }
@@ -40,5 +41,6 @@ private:
     PacmanEnemy** m_ppEnemies;
     int m_iLives;
     int m_iNumEnemies;
+    int m_iPoints;
 };
 

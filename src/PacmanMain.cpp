@@ -18,6 +18,7 @@ PacmanMain::PacmanMain(void)
 , m_ppEnemies(NULL)
 , m_iLives(5)
 , m_iNumEnemies(0)
+, m_iPoints(0)
 {
 }
 
@@ -130,8 +131,10 @@ int PacmanMain::LoadMapFromFile(char* filename)
                 m_oTiles.SetValue(x, y, 1); // wall
             if (value == ' ')
                 m_oTiles.SetValue(x, y, 0); // blank tile
-            if (value == 'p')
+            if (value == '.')
                 m_oTiles.SetValue(x, y, 2); // pellet
+            if (value == 'o')
+                m_oTiles.SetValue(x, y, 7); // powerup
             if (value == 'e')
                 m_ppEnemies[iEnemyNumber++] = new PacmanEnemy(this, x, y);
             printf("%c ", data[y][x]);
@@ -154,10 +157,13 @@ void PacmanMain::DrawStrings()
             SetNextUpdateRect(0, 280, GetScreenWidth(), 50);
             break;
         case stateMain:
-            char buf[10]; // no more than 99 lives!
+            char lives[10]; // no more than 99 lives!
+            char points[15]; // no more than 1,000,000 points!
+            sprintf(lives, "Lives: %d", m_iLives);
+            sprintf(points, "Points: %d", m_iPoints);
             CopyBackgroundPixels(0, 7, GetScreenWidth(), 50);
-            sprintf(buf, "Lives: %d", m_iLives);
-            DrawScreenString(25, 7, buf, 0xffffff, NULL);
+            DrawScreenString(25, 7, lives, 0xffffff, NULL);
+            DrawScreenString(600, 7, points, 0xffffff, NULL);
             SetNextUpdateRect(0, 7, GetScreenWidth(), 50);
             break;
         case statePaused:
@@ -327,4 +333,9 @@ void PacmanMain::LoseLife()
         m_state = stateLifeLost;
     else
         m_state = stateGameOver;
+}
+
+void PacmanMain::AtePellet()
+{
+    m_iPoints += 10;
 }
