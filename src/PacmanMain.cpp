@@ -151,30 +151,32 @@ void PacmanMain::DrawStrings()
     {
         case stateInit:
             CopyBackgroundPixels(0, 280, GetScreenWidth(), 40);
-            DrawScreenString(100, 300, "Initialised and waiting for SPACE", 0x0, NULL);
-            SetNextUpdateRect(0, 280, GetScreenWidth(), 40);
+            DrawScreenString(170, 280, "Ready? Press SPACE to start", 0x0, NULL);
+            SetNextUpdateRect(0, 280, GetScreenWidth(), 50);
             break;
         case stateMain:
             char buf[10]; // no more than 99 lives!
-            CopyBackgroundPixels(0, 0, GetScreenWidth(), 30);
+            CopyBackgroundPixels(0, 7, GetScreenWidth(), 50);
             sprintf(buf, "Lives: %d", m_iLives);
             DrawScreenString(25, 7, buf, 0xffffff, NULL);
-            SetNextUpdateRect(0, 0, GetScreenWidth(), 30);
+            SetNextUpdateRect(0, 7, GetScreenWidth(), 50);
             break;
         case statePaused:
-            CopyBackgroundPixels(0, 280, GetScreenWidth(), 40);
+            CopyBackgroundPixels(0, 300, GetScreenWidth(), 50);
             DrawScreenString(200, 300, "Paused. Press SPACE to continue", 0xffffff, NULL);
-            SetNextUpdateRect(0, 280, GetScreenWidth(), 40);
+            SetNextUpdateRect(0, 300, GetScreenWidth(), 50);
             break;
         case stateLifeLost:
-            CopyBackgroundPixels(0, 280, GetScreenWidth(), 40);
-            DrawScreenString(200, 300, "Life lost! Press SPACE to continue", 0xffffff, NULL);
-            SetNextUpdateRect(0, 280, GetScreenWidth(), 50);
+            CopyBackgroundPixels(0, 200, GetScreenWidth(), 150);
+            DrawScreenString(300, 200, "Life lost!", 0xffffff, NULL);
+            DrawScreenString(200, 300, "Press SPACE to continue", 0xffffff, NULL);
+            SetNextUpdateRect(0, 200, GetScreenWidth(), 150);
             break;
         case stateGameOver:
-            CopyBackgroundPixels(0, 280, GetScreenWidth(), 40);
-            DrawScreenString(50, 300, "Game over! Press SPACE to start again or ESC to exit", 0xffffff, NULL);
-            SetNextUpdateRect(0, 280, GetScreenWidth(), 50);
+            CopyBackgroundPixels(0, 200, GetScreenWidth(), 150);
+            DrawScreenString(300, 200, "Game over!", 0xffffff, NULL);
+            DrawScreenString(90, 300, "Press SPACE to start again or ESC to exit", 0xffffff, NULL);
+            SetNextUpdateRect(0, 200, GetScreenWidth(), 150);
             break;
     }
 }
