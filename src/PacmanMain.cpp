@@ -137,6 +137,8 @@ int PacmanMain::LoadMapFromFile(char* filename)
                 m_oTiles.SetValue(x, y, 7); // powerup
             if (value == 'e')
                 m_ppEnemies[iEnemyNumber++] = new PacmanEnemy(this, x, y);
+            if (value == 't')
+                m_oTiles.SetValue(x, y, 9); // teleport
             printf("%c ", data[y][x]);
         }
         printf("\n");

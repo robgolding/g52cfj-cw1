@@ -100,6 +100,9 @@ void PacmanPlayer::HandleMovementFinished(int iCurrentTime)
         case 8:
             tm.UpdateTile(m_pMainEngine, m_iMapX, m_iMapY, 0);
             break;
+        case 9:
+            MoveTo(abs(m_iMapX - m_pMainEngine->GetTileManager().GetMapWidth()) - 1, m_iMapY);
+            break;
     }
 
     // Are we allowed to move onto the tile requested?

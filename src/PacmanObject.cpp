@@ -133,6 +133,8 @@ void PacmanObject::MoveTo(int iMapX, int iMapY)
 {
     m_iMapX = iMapX;
     m_iMapY = iMapY;
+    m_iCurrentScreenX = GetScreenPosForMapX(iMapX);
+    m_iCurrentScreenY = GetScreenPosForMapY(iMapY);
 }
 
 int PacmanObject::GetXCentre()
