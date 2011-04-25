@@ -6,6 +6,7 @@ SOURCES = \
 		  FontManager.cpp \
 		  JPGImage.cpp \
 		  mainfunction.cpp \
+		  PacmanAI.cpp \
 		  PacmanEnemy.cpp \
 		  PacmanMain.cpp \
 		  PacmanMover.cpp \

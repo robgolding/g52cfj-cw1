@@ -137,6 +137,36 @@ void PacmanObject::MoveTo(int iMapX, int iMapY)
     m_iCurrentScreenY = GetScreenPosForMapY(iMapY);
 }
 
+void PacmanObject::MoveInDirection(int iDir, int iCurrentTime)
+{
+    if (CanMoveInDirection(iDir))
+    {
+        m_iMapX += GetXDiffForDirection(m_iDir);
+        m_iMapY += GetYDiffForDirection(m_iDir);
+        m_oMover.Setup(
+                m_iCurrentScreenX,
+                m_iCurrentScreenY,
+                GetScreenPosForMapX(m_iMapX),
+                GetScreenPosForMapY(m_iMapY),
+                iCurrentTime,
+                iCurrentTime+400);
+    }
+}
+
+int PacmanObject::CanMoveInDirection(int iDir)
+{
+    if (m_pMainEngine->GetTileManager().GetValue(
+                m_iMapX + GetXDiffForDirection(iDir),
+                m_iMapY + GetYDiffForDirection(iDir)) != 1)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 int PacmanObject::GetXCentre()
 {
     return m_iCurrentScreenX;

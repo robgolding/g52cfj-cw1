@@ -17,6 +17,8 @@ class PacmanObject : public DisplayableObject
         int GetYDiffForDirection(int iDir);
         int* GetBoundingBox();
         void MoveTo(int iMapx, int iMapY);
+        virtual void MoveInDirection(int iDir, int iCurrentTime);
+        virtual int CanMoveInDirection(int iDir);
         virtual int GetXCentre();
         virtual int GetYCentre();
     protected:

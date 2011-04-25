@@ -4,6 +4,7 @@
 #include "PacmanObject.h"
 #include "PacmanPlayer.h"
 #include "PacmanEnemy.h"
+#include "PacmanAI.h"
 #include "JPGImage.h"
 #include "TileManager.h"
 
@@ -136,7 +137,7 @@ int PacmanMain::LoadMapFromFile(char* filename)
             if (value == 'o')
                 m_oTiles.SetValue(x, y, 7); // powerup
             if (value == 'e')
-                m_ppEnemies[iEnemyNumber++] = new PacmanEnemy(this, x, y);
+                m_ppEnemies[iEnemyNumber++] = new PacmanEnemy(this, x, y, new PacmanAI(this));
             if (value == 't')
                 m_oTiles.SetValue(x, y, 9); // teleport
             printf("%c ", data[y][x]);
