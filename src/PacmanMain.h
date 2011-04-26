@@ -21,9 +21,11 @@ public:
     void MouseDown(int iButton, int iX, int iY);
     void KeyDown(int iKeyCode);
     int GameInit();
+    int GetModifiedTime();
 
     void CollisionDetected(PacmanPlayer* player, PacmanEnemy* enemy);
     void LoseLife();
+    void GameOver();
     void AtePellet();
 
     PacmanTileManager& GetTileManager() { return m_oTiles; }
@@ -39,6 +41,7 @@ private:
     State m_state;
     PacmanPlayer* m_pPlayer;
     PacmanEnemy** m_ppEnemies;
+    int m_iPauseDuration;
     int m_iLives;
     int m_iNumEnemies;
     int m_iPoints;

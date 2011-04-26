@@ -7,6 +7,8 @@
 PacmanObject::PacmanObject(PacmanMain* pEngine, int iMapX, int iMapY)
 : DisplayableObject(pEngine)
 , m_pMainEngine(pEngine)
+, m_iOriginalMapX(iMapX)
+, m_iOriginalMapY(iMapY)
 , m_iMapX(iMapX)
 , m_iMapY(iMapY)
 , m_iDir(0)
@@ -133,8 +135,9 @@ void PacmanObject::MoveTo(int iMapX, int iMapY)
 {
     m_iMapX = iMapX;
     m_iMapY = iMapY;
-    m_iCurrentScreenX = GetScreenPosForMapX(iMapX);
-    m_iCurrentScreenY = GetScreenPosForMapY(iMapY);
+    m_iPreviousScreenX = m_iCurrentScreenX = GetScreenPosForMapX(iMapX);
+    m_iPreviousScreenY = m_iCurrentScreenY = GetScreenPosForMapY(iMapY);
+    m_oMover.Setup(0, 0, 0, 0, 0, 0);
 }
 
 void PacmanObject::MoveInDirection(int iDir, int iCurrentTime)
@@ -175,6 +178,11 @@ int PacmanObject::GetXCentre()
 int PacmanObject::GetYCentre()
 {
     return m_iCurrentScreenY;
+}
+
+void PacmanObject::ResetPosition()
+{
+    MoveTo(m_iOriginalMapX, m_iOriginalMapY);
 }
 
 int PacmanObject::GetScreenPosForMapX(int iMapX)

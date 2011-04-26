@@ -17,6 +17,7 @@ PacmanMain::PacmanMain(void)
 , m_state(stateInit)
 , m_pPlayer(NULL)
 , m_ppEnemies(NULL)
+, m_iPauseDuration(0)
 , m_iLives(5)
 , m_iNumEnemies(0)
 , m_iPoints(0)
@@ -197,18 +198,20 @@ void PacmanMain::GameAction()
         return;
 
     // Don't act for another 10 ticks
-    SetTimeToAct(1);
+    SetTimeToAct(10);
 
     switch(m_state)
     {
     case stateInit:
+        break;
     case statePaused:
     case stateLifeLost:
     case stateGameOver:
+        m_iPauseDuration += 10;
         break;
     case stateMain:
         // Only tell objects to move when not paused etc
-        UpdateAllObjects(GetTime());
+        UpdateAllObjects(GetModifiedTime());
         break;
     }
 }
@@ -285,6 +288,11 @@ int PacmanMain::GameInit()
     return 0;
 }
 
+int PacmanMain::GetModifiedTime()
+{
+    return GetTime() - m_iPauseDuration;
+}
+
 /* Draw the changes to the screen.
 Remove the changing objects, redraw the strings and draw the changing objects again.
  */
@@ -325,17 +333,25 @@ void PacmanMain::CollisionDetected(PacmanPlayer* player, PacmanEnemy* enemy)
 
 void PacmanMain::LoseLife()
 {
+    m_state = stateLifeLost;
     --m_iLives; // so much faster than post-increment!
+    PacmanObject* pObj;
     for (int i=0; m_ppDisplayableObjects[i] != NULL; i++)
     {
-        m_ppDisplayableObjects[i]->SetVisible(false);
+        //m_ppDisplayableObjects[i]->SetVisible(false);
+        pObj = dynamic_cast<PacmanObject*>(m_ppDisplayableObjects[i]);
+        pObj->ResetPosition();
     }
+    Redraw(true);
+    if (m_iLives < 1)
+        GameOver();
+}
+
+void PacmanMain::GameOver()
+{
+    m_state = stateGameOver;
     GameInit();
     Redraw(true);
-    if (m_iLives > 0)
-        m_state = stateLifeLost;
-    else
-        m_state = stateGameOver;
 }
 
 void PacmanMain::AtePellet()

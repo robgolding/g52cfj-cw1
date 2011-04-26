@@ -21,9 +21,12 @@ class PacmanObject : public DisplayableObject
         virtual int CanMoveInDirection(int iDir);
         virtual int GetXCentre();
         virtual int GetYCentre();
+        virtual void ResetPosition();
     protected:
         PacmanMain* m_pMainEngine;
         PacmanMover m_oMover;
+        int m_iOriginalMapX;
+        int m_iOriginalMapY;
         int m_iMapX;
         int m_iMapY;
         int m_iDir;
