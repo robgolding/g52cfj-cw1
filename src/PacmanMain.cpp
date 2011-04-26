@@ -21,6 +21,7 @@ PacmanMain::PacmanMain(void)
 , m_iPauseDuration(0)
 , m_iLives(5)
 , m_iNumEnemies(0)
+, m_iNumPellets(0)
 , m_iPoints(0)
 , m_iPowerupRemaining(0)
 {
@@ -49,6 +50,7 @@ void PacmanMain::SetupBackgroundBuffer()
         case statePaused:
         case stateLifeLost:
         case stateGameOver:
+        case stateLevelCompleted:
             FillBackground(0x000000);
             m_oTiles.DrawAllTiles(this,
                     this->GetBackground(),
@@ -95,6 +97,7 @@ int PacmanMain::LoadMapFromFile(char* filename)
     ifstream in(filename);
 
     m_iNumEnemies = 0;
+    m_iNumPellets = 0;
 
     if (in.is_open())
     {
@@ -132,18 +135,29 @@ int PacmanMain::LoadMapFromFile(char* filename)
         for (int x=0; x<width; ++x)
         {
             value = data[y][x];
-            if (value == 'w')
-                m_oTiles.SetValue(x, y, 1); // wall
-            if (value == ' ')
-                m_oTiles.SetValue(x, y, 0); // blank tile
-            if (value == '.')
-                m_oTiles.SetValue(x, y, 2); // pellet
-            if (value == 'o')
-                m_oTiles.SetValue(x, y, 7); // powerup
-            if (value == 'e')
-                m_ppEnemies[iEnemyNumber++] = new PacmanEnemy(this, x, y, new PacmanAI(this));
-            if (value == 't')
-                m_oTiles.SetValue(x, y, 9); // teleport
+            switch(value)
+            {
+                case 'w':
+                    m_oTiles.SetValue(x, y, 1); // wall
+                    break;
+                case ' ':
+                    m_oTiles.SetValue(x, y, 0); // blank tile
+                    break;
+                case '.':
+                    m_oTiles.SetValue(x, y, 2); // pellet
+                    ++m_iNumPellets;
+                    break;
+                case 'o':
+                    m_oTiles.SetValue(x, y, 7); // powerup
+                    ++m_iNumPellets;
+                    break;
+                case 'e':
+                    m_ppEnemies[iEnemyNumber++] = new PacmanEnemy(this, x, y, new PacmanAI(this));
+                    break;
+                case 't':
+                    m_oTiles.SetValue(x, y, 9); // teleport
+                    break;
+            }
             printf("%c ", data[y][x]);
         }
         printf("\n");
@@ -189,6 +203,12 @@ void PacmanMain::DrawStrings()
             CopyBackgroundPixels(0, 200, GetScreenWidth(), 150);
             DrawScreenString(300, 200, "Game over!", 0xffffff, NULL);
             DrawScreenString(90, 300, "Press SPACE to start again or ESC to exit", 0xffffff, NULL);
+            SetNextUpdateRect(0, 200, GetScreenWidth(), 150);
+            break;
+        case stateLevelCompleted:
+            CopyBackgroundPixels(0, 200, GetScreenWidth(), 150);
+            DrawScreenString(300, 200, "Level complete!", 0xffffff, NULL);
+            DrawScreenString(280, 300, "Press ESC to exit", 0xffffff, NULL);
             SetNextUpdateRect(0, 200, GetScreenWidth(), 150);
             break;
     }
@@ -371,6 +391,12 @@ void PacmanMain::GameOver()
     Redraw(true);
 }
 
+void PacmanMain::LevelCompleted()
+{
+    m_state = stateLevelCompleted;
+    Redraw(true);
+}
+
 void PacmanMain::AtePellet(bool bIsPowerup)
 {
     int iPoints = 10;
@@ -386,6 +412,9 @@ void PacmanMain::AtePellet(bool bIsPowerup)
     }
 
     m_iPoints += iPoints;
+
+    if (--m_iNumPellets <= 0)
+        LevelCompleted();
 }
 
 bool PacmanMain::IsInPowerupState()
