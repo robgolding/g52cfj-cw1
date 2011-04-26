@@ -15,12 +15,14 @@ using namespace std;
 PacmanMain::PacmanMain(void)
 : BaseEngine(50)
 , m_state(stateInit)
+, m_prevState(stateMain)
 , m_pPlayer(NULL)
 , m_ppEnemies(NULL)
 , m_iPauseDuration(0)
 , m_iLives(5)
 , m_iNumEnemies(0)
 , m_iPoints(0)
+, m_iPowerupRemaining(0)
 {
 }
 
@@ -37,6 +39,7 @@ void PacmanMain::SetupBackgroundBuffer()
             FillBackground(0xffff00);
             return;
         case stateMain:
+        case statePowerup:
             FillBackground(0x000000);
             m_oTiles.DrawAllTiles(this,
                     this->GetBackground(),
@@ -153,7 +156,7 @@ int PacmanMain::LoadMapFromFile(char* filename)
 
 void PacmanMain::DrawStrings()
 {
-    switch( m_state)
+    switch(m_state)
     {
         case stateInit:
             CopyBackgroundPixels(0, 280, GetScreenWidth(), 40);
@@ -161,6 +164,7 @@ void PacmanMain::DrawStrings()
             SetNextUpdateRect(0, 280, GetScreenWidth(), 50);
             break;
         case stateMain:
+        case statePowerup:
             char lives[10]; // no more than 99 lives!
             char points[15]; // no more than 1,000,000 points!
             sprintf(lives, "Lives: %d", m_iLives);
@@ -209,6 +213,10 @@ void PacmanMain::GameAction()
     case stateGameOver:
         m_iPauseDuration += 10;
         break;
+    case statePowerup:
+        m_iPowerupRemaining -= 10;
+        if (m_iPowerupRemaining <= 0)
+            m_state = stateMain;
     case stateMain:
         // Only tell objects to move when not paused etc
         UpdateAllObjects(GetModifiedTime());
@@ -245,7 +253,9 @@ void PacmanMain::KeyDown(int iKeyCode)
             Redraw(true);
             break;
         case stateMain:
+        case statePowerup:
             // Go to state paused
+            m_prevState = m_state;
             m_state = statePaused;
             // Force redraw of background
             SetupBackgroundBuffer();
@@ -253,12 +263,13 @@ void PacmanMain::KeyDown(int iKeyCode)
             Redraw(true);
             break;
         case statePaused:
-        case stateLifeLost:
-            // Go to state main
-            m_state = stateMain;
-            // Force redraw of background
+            m_state = m_prevState;
             SetupBackgroundBuffer();
-            // Redraw the whole screen now
+            Redraw(true);
+            break;
+        case stateLifeLost:
+            m_state = stateMain;
+            SetupBackgroundBuffer();
             Redraw(true);
             break;
         case stateGameOver:
@@ -328,7 +339,13 @@ void PacmanMain::DrawScreen()
 // A collision has been detected between the player `player' and enemy `enemy'
 void PacmanMain::CollisionDetected(PacmanPlayer* player, PacmanEnemy* enemy)
 {
-    LoseLife();
+    if (IsInPowerupState())
+    {
+        enemy->ResetPosition();
+        Redraw(true);
+    }
+    else
+        LoseLife();
 }
 
 void PacmanMain::LoseLife()
@@ -354,7 +371,29 @@ void PacmanMain::GameOver()
     Redraw(true);
 }
 
-void PacmanMain::AtePellet()
+void PacmanMain::AtePellet(bool bIsPowerup)
 {
-    m_iPoints += 10;
+    int iPoints = 10;
+
+    if (m_state == statePowerup)
+        iPoints += 10;
+
+    if (bIsPowerup)
+    {
+        iPoints += 40;
+        m_state = statePowerup;
+        m_iPowerupRemaining = 5000;
+    }
+
+    m_iPoints += iPoints;
+}
+
+bool PacmanMain::IsInPowerupState()
+{
+    return m_state == statePowerup;
+}
+
+int PacmanMain::GetPowerupRemaining()
+{
+    return m_iPowerupRemaining;
 }

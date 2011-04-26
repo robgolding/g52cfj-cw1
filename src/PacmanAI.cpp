@@ -34,6 +34,8 @@ int PacmanAI::GetMove(PacmanObject* pObj, int iMapX, int iMapY)
     for (int i=0; i<2; i++)
     {
         iNewDir = piDirPrefs[i];
+        if (m_pMainEngine->IsInPowerupState())
+            iNewDir = (iNewDir + 2) % 4;
         if (pObj->CanMoveInDirection(iNewDir))
         {
             return iNewDir;

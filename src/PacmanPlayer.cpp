@@ -94,8 +94,8 @@ void PacmanPlayer::HandleMovementFinished(int iCurrentTime)
         case 5:
         case 6:
         case 7:
+            m_pMainEngine->AtePellet(tm.GetValue(m_iMapX, m_iMapY) == 7);
             tm.UpdateTile(m_pMainEngine, m_iMapX, m_iMapY, 0);
-            m_pMainEngine->AtePellet();
             break;
         case 8:
             tm.UpdateTile(m_pMainEngine, m_iMapX, m_iMapY, 0);

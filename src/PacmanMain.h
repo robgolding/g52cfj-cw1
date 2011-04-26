@@ -26,12 +26,14 @@ public:
     void CollisionDetected(PacmanPlayer* player, PacmanEnemy* enemy);
     void LoseLife();
     void GameOver();
-    void AtePellet();
+    void AtePellet(bool bIsPowerup);
+    bool IsInPowerupState();
+    int GetPowerupRemaining();
 
     PacmanTileManager& GetTileManager() { return m_oTiles; }
     PacmanPlayer& GetPlayer() { return *m_pPlayer; }
 
-    enum State {stateInit, stateMain, statePaused, stateLifeLost, stateGameOver};
+    enum State {stateInit, stateMain, statePowerup, statePaused, stateLifeLost, stateGameOver};
 
     void DrawScreen();
     void DrawChanges();
@@ -39,11 +41,13 @@ public:
 private:
     PacmanTileManager m_oTiles;
     State m_state;
+    State m_prevState;
     PacmanPlayer* m_pPlayer;
     PacmanEnemy** m_ppEnemies;
     int m_iPauseDuration;
     int m_iLives;
     int m_iNumEnemies;
     int m_iPoints;
+    int m_iPowerupRemaining;
 };
 

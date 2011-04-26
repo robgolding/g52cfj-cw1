@@ -10,15 +10,29 @@ PacmanEnemy::PacmanEnemy(PacmanMain* pEngine, int iMapX, int iMapY, PacmanAI* pA
 
 void PacmanEnemy::Draw()
 {
-    if ( !IsVisible() )
+    if (!IsVisible())
         return;
+
+    int colour;
+    if (m_pMainEngine->IsInPowerupState())
+    {
+        if (m_pMainEngine->GetPowerupRemaining() < 2000)
+            if (m_pMainEngine->GetModifiedTime() % 500 > 250)
+                colour = 0xffffff;
+            else
+                colour = 0xff00ff;
+        else
+            colour = 0xff00ff;
+    }
+    else
+        colour = 0x00ffff;
 
     m_pMainEngine->DrawScreenOval(
             m_iCurrentScreenX - m_iDrawWidth / 2,
             m_iCurrentScreenY - m_iDrawHeight / 2,
             m_iCurrentScreenX + m_iDrawWidth / 2,
             m_iCurrentScreenY + m_iDrawHeight / 2,
-            0x00ffff);
+            colour);
 
     StoreLastScreenPositionAndUpdateRect();
 }
