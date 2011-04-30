@@ -1,0 +1,72 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{longtable}
+%\usepackage{fullpage}
+\usepackage{pstricks}
+\usepackage{tikz}
+\usepackage[absolute]{textpos}
+\usepackage{import}
+\usepackage{subfigure}
+\usepackage{setspace}
+
+\title{G52CFJ C++ for Java Programmers \\ Coursework Documentation}
+\author{Robert J. Golding (rjg08u)} \date{\today}
+
+% Dutch style paragraph formatting
+\setlength{\parskip}{1.3ex plus 0.2ex minus 0.2ex}
+\setlength{\parindent}{0pt}
+
+%\doublespacing
+\onehalfspacing
+
+\begin{document}
+    \maketitle
+
+    \section{Overview}
+
+    The game is intended to be a clone of the popular Pacman game. Though it
+    does not implement all of the functionality of the official game, all of
+    the coursework requirements are fulfilled.
+
+    \section{Usage}
+
+    The game starts with an initialisation screen, requiring the user to press
+    the space bar to start. Once the game is running, pressing space again
+    pauses. Pressing the escape key at any point exits the game.
+
+    The aim of the game is to collect all of the ``pellets'' without being
+    caught by the enemies. The larger pellets are ``power-ups'' which work in
+    the same way as the original Pacman game---allowing the player to catch
+    enemies, sending them back to their original starting location.
+
+    Once all the pellets have been collected, the level is complete. Each
+    pellet scores the player 10 points. A power-up pellet is worth 50 points.
+    The power-up mode lasts for 5 seconds, and whilst in this mode normal
+    pellets score double the normal amount (20 points).
+
+    To move the player, use the arrow keys on the keyboard. Once moving, the
+    player will continue to move in the same direction until a wall is reached,
+    when it will stop. Pressing a key to move in a direction which is
+    impossible due to a wall will delay that action until it is next available,
+    in much the same way as the original Pacman game.
+
+    \section{Requirements}
+
+    \subsection{Draw an Appropriate Background}
+    \subsection{Have Moving Objects}
+    \subsection{Have Interaction Between the Objects \& Background}
+    \subsection{Provide User Interaction}
+    \subsection{Provide AI-Controlled Objects}
+    \subsection{Load Data From Files}
+    \subsection{Save and Load Information}
+    \subsection{Display Status Information on the Screen}
+    \subsection{Support Different States}
+
+    \section{Additional Comments}
+
+\end{document}
