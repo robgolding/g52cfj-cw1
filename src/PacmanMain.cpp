@@ -406,7 +406,7 @@ void PacmanMain::AtePellet(bool bIsPowerup)
 
     if (bIsPowerup)
     {
-        iPoints += 40;
+        iPoints = 50;
         m_state = statePowerup;
         m_iPowerupRemaining = 5000;
     }
