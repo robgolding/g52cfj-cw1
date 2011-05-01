@@ -30,4 +30,4 @@ clean:
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 run: $(EXECUTABLE)
-	./$(EXECUTABLE)
+	./$(EXECUTABLE) level1.txt level2.txt

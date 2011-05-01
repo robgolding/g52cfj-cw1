@@ -12,9 +12,11 @@ public:
     PacmanMain(void);
     ~PacmanMain(void);
 
+    void AddLevel(char* pMapName);
+
     void SetupBackgroundBuffer();
     int InitialiseObjects();
-    virtual int LoadMapFromFile(char* filename);
+    virtual int LoadCurrentLevel();
 
     void DrawStrings();
     void GameAction();
@@ -27,6 +29,7 @@ public:
     void LoseLife();
     void GameOver();
     void LevelCompleted();
+    void GameCompleted();
     void AtePellet(bool bIsPowerup);
     bool IsInPowerupState();
     int GetPowerupRemaining();
@@ -34,17 +37,20 @@ public:
     PacmanTileManager& GetTileManager() { return m_oTiles; }
     PacmanPlayer& GetPlayer() { return *m_pPlayer; }
 
-    enum State {stateInit, stateMain, statePowerup, statePaused, stateLifeLost, stateLevelCompleted, stateGameOver};
+    enum State {stateInit, stateMain, statePowerup, statePaused, stateLifeLost, stateLevelCompleted, stateGameCompleted, stateGameOver};
 
     void DrawScreen();
     void DrawChanges();
 
 private:
+    char** m_ppLevels;
     PacmanTileManager m_oTiles;
     State m_state;
     State m_prevState;
     PacmanPlayer* m_pPlayer;
     PacmanEnemy** m_ppEnemies;
+    int m_iNumLevels;
+    int m_iCurrentLevel;
     int m_iPauseDuration;
     int m_iLives;
     int m_iNumEnemies;

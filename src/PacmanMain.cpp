@@ -10,16 +10,23 @@
 
 #include <iostream>
 #include <fstream>
+#include <stdarg.h>
+
+#define NUM_LIVES 5;
+
 using namespace std;
 
 PacmanMain::PacmanMain(void)
 : BaseEngine(50)
+, m_ppLevels(NULL)
 , m_state(stateInit)
 , m_prevState(stateMain)
 , m_pPlayer(NULL)
 , m_ppEnemies(NULL)
+, m_iNumLevels(0)
+, m_iCurrentLevel(0)
 , m_iPauseDuration(0)
-, m_iLives(5)
+, m_iLives(0)
 , m_iNumEnemies(0)
 , m_iNumPellets(0)
 , m_iPoints(0)
@@ -29,6 +36,26 @@ PacmanMain::PacmanMain(void)
 
 PacmanMain::~PacmanMain(void)
 {
+}
+
+void PacmanMain::AddLevel(char* pMapName)
+{
+    if (m_iNumLevels == 0)
+    {
+        m_ppLevels = new char*[++m_iNumLevels];
+        m_ppLevels[0] = pMapName;
+    }
+    else
+    {
+        char** ppNewLevels = new char*[m_iNumLevels+1];
+        for (int i=0; i<m_iNumLevels; i++)
+        {
+            ppNewLevels[i] = m_ppLevels[i];
+        }
+        ppNewLevels[m_iNumLevels++] = pMapName;
+        m_ppLevels = ppNewLevels;
+    }
+    printf("Added level. m_iNumLevels=%d\n", m_iNumLevels);
 }
 
 void PacmanMain::SetupBackgroundBuffer()
@@ -51,6 +78,7 @@ void PacmanMain::SetupBackgroundBuffer()
         case stateLifeLost:
         case stateGameOver:
         case stateLevelCompleted:
+        case stateGameCompleted:
             FillBackground(0x000000);
             m_oTiles.DrawAllTiles(this,
                     this->GetBackground(),
@@ -88,12 +116,19 @@ int PacmanMain::InitialiseObjects()
     return 0;
 }
 
-int PacmanMain::LoadMapFromFile(char* filename)
+int PacmanMain::LoadCurrentLevel()
 {
+    if (m_iCurrentLevel >= m_iNumLevels)
+    {
+        printf("Cannot load level %d\n", m_iCurrentLevel);
+        return 1;
+    }
+
     int width = -1;
     int height = 0;
     char line[255];
     char* data[255];
+    char* filename = m_ppLevels[m_iCurrentLevel];
     ifstream in(filename);
 
     m_iNumEnemies = 0;
@@ -151,6 +186,9 @@ int PacmanMain::LoadMapFromFile(char* filename)
                     m_oTiles.SetValue(x, y, 7); // powerup
                     ++m_iNumPellets;
                     break;
+                case 'p':
+                    m_pPlayer = new PacmanPlayer(this, x, y);
+                    break;
                 case 'e':
                     m_ppEnemies[iEnemyNumber++] = new PacmanEnemy(this, x, y, new PacmanAI(this));
                     break;
@@ -180,11 +218,14 @@ void PacmanMain::DrawStrings()
         case stateMain:
         case statePowerup:
             char lives[10]; // no more than 99 lives!
+            char level[10]; // no more than 99 levels!
             char points[15]; // no more than 1,000,000 points!
             sprintf(lives, "Lives: %d", m_iLives);
+            sprintf(level, "Level: %d", m_iCurrentLevel+1); // zero-indexed
             sprintf(points, "Points: %d", m_iPoints);
             CopyBackgroundPixels(0, 7, GetScreenWidth(), 50);
             DrawScreenString(25, 7, lives, 0xffffff, NULL);
+            DrawScreenString(300, 7, level, 0xffffff, NULL);
             DrawScreenString(600, 7, points, 0xffffff, NULL);
             SetNextUpdateRect(0, 7, GetScreenWidth(), 50);
             break;
@@ -208,7 +249,13 @@ void PacmanMain::DrawStrings()
         case stateLevelCompleted:
             CopyBackgroundPixels(0, 200, GetScreenWidth(), 150);
             DrawScreenString(300, 200, "Level complete!", 0xffffff, NULL);
-            DrawScreenString(280, 300, "Press ESC to exit", 0xffffff, NULL);
+            DrawScreenString(100, 300, "Press SPACE to continue or ESC to exit", 0xffffff, NULL);
+            SetNextUpdateRect(0, 200, GetScreenWidth(), 150);
+            break;
+        case stateGameCompleted:
+            CopyBackgroundPixels(0, 200, GetScreenWidth(), 150);
+            DrawScreenString(300, 200, "Game complete!", 0xffffff, NULL);
+            DrawScreenString(300, 300, "Press ESC to exit", 0xffffff, NULL);
             SetNextUpdateRect(0, 200, GetScreenWidth(), 150);
             break;
     }
@@ -226,21 +273,23 @@ void PacmanMain::GameAction()
 
     switch(m_state)
     {
-    case stateInit:
-        break;
-    case statePaused:
-    case stateLifeLost:
-    case stateGameOver:
-        m_iPauseDuration += 10;
-        break;
-    case statePowerup:
-        m_iPowerupRemaining -= 10;
-        if (m_iPowerupRemaining <= 0)
-            m_state = stateMain;
-    case stateMain:
-        // Only tell objects to move when not paused etc
-        UpdateAllObjects(GetModifiedTime());
-        break;
+        case stateInit:
+            break;
+        case statePaused:
+        case stateLifeLost:
+        case stateGameOver:
+        case stateLevelCompleted:
+        case stateGameCompleted:
+            m_iPauseDuration += 10;
+            break;
+        case statePowerup:
+            m_iPowerupRemaining -= 10;
+            if (m_iPowerupRemaining <= 0)
+                m_state = stateMain;
+        case stateMain:
+            // Only tell objects to move when not paused etc
+            UpdateAllObjects(GetModifiedTime());
+            break;
     }
 }
 
@@ -258,51 +307,57 @@ void PacmanMain::KeyDown(int iKeyCode)
     // NEW SWITCH
     switch (iKeyCode)
     {
-    case SDLK_ESCAPE: // End program when escape is pressed
-        SetExitWithCode(0);
-        break;
-    case SDLK_SPACE: // SPACE Pauses
-        switch(m_state)
-        {
-        case stateInit:
-            // Go to state main
-            m_state = stateMain;
-            // Force redraw of background
-            SetupBackgroundBuffer();
-            // Redraw the whole screen now
-            Redraw(true);
+        case SDLK_ESCAPE: // End program when escape is pressed
+            SetExitWithCode(0);
             break;
-        case stateMain:
-        case statePowerup:
-            // Go to state paused
-            m_prevState = m_state;
-            m_state = statePaused;
-            // Force redraw of background
-            SetupBackgroundBuffer();
-            // Redraw the whole screen now
-            Redraw(true);
-            break;
-        case statePaused:
-            m_state = m_prevState;
-            SetupBackgroundBuffer();
-            Redraw(true);
-            break;
-        case stateLifeLost:
-            m_state = stateMain;
-            SetupBackgroundBuffer();
-            Redraw(true);
-            break;
-        case stateGameOver:
-            m_iLives = 5;
-            // Go to state main
-            m_state = stateMain;
-            // Force redraw of background
-            SetupBackgroundBuffer();
-            // Redraw the whole screen now
-            Redraw(true);
-            break;
-        } // End switch on current state
-        break; // End of case SPACE
+        case SDLK_SPACE: // SPACE Pauses
+            switch(m_state)
+            {
+                case stateInit:
+                    // Go to state main
+                    m_state = stateMain;
+                    // Force redraw of background
+                    SetupBackgroundBuffer();
+                    // Redraw the whole screen now
+                    Redraw(true);
+                    break;
+                case stateMain:
+                case statePowerup:
+                    // Go to state paused
+                    m_prevState = m_state;
+                    m_state = statePaused;
+                    // Force redraw of background
+                    SetupBackgroundBuffer();
+                    // Redraw the whole screen now
+                    Redraw(true);
+                    break;
+                case statePaused:
+                    m_state = m_prevState;
+                    SetupBackgroundBuffer();
+                    Redraw(true);
+                    break;
+                case stateLifeLost:
+                    m_state = stateMain;
+                    SetupBackgroundBuffer();
+                    Redraw(true);
+                    break;
+                case stateLevelCompleted:
+                    m_state = stateMain;
+                    GameInit();
+                    SetupBackgroundBuffer();
+                    Redraw(true);
+                    break;
+                case stateGameOver:
+                    m_iLives = 5;
+                    // Go to state main
+                    m_state = stateMain;
+                    // Force redraw of background
+                    SetupBackgroundBuffer();
+                    // Redraw the whole screen now
+                    Redraw(true);
+                    break;
+            } // End switch on current state
+            break; // End of case SPACE
     }
 }
 
@@ -310,13 +365,14 @@ int PacmanMain::GameInit()
 {
     // do this the correct way round so InitialiseObjects can check the value
     // of the tiles for placing objects
+    m_iLives = NUM_LIVES;
+
     SetupBackgroundBuffer();
 
-    LoadMapFromFile("map.txt");
-    m_pPlayer = new PacmanPlayer(this, 1, 1);
-
-    InitialiseObjects();
-    return 0;
+    if (LoadCurrentLevel() == 0)
+        return InitialiseObjects();
+    else
+        exit(1);
 }
 
 int PacmanMain::GetModifiedTime()
@@ -372,6 +428,9 @@ void PacmanMain::LoseLife()
 {
     m_state = stateLifeLost;
     --m_iLives; // so much faster than post-increment!
+    m_iPoints -= 100;
+    if (m_iPoints < 0)
+        m_iPoints = 0;
     PacmanObject* pObj;
     for (int i=0; m_ppDisplayableObjects[i] != NULL; i++)
     {
@@ -394,6 +453,17 @@ void PacmanMain::GameOver()
 void PacmanMain::LevelCompleted()
 {
     m_state = stateLevelCompleted;
+
+    if (++m_iCurrentLevel >= m_iNumLevels)
+        GameCompleted();
+
+    printf("Level is now %d\n", m_iCurrentLevel);
+    Redraw(true);
+}
+
+void PacmanMain::GameCompleted()
+{
+    m_state = stateGameCompleted;
     Redraw(true);
 }
 
