@@ -1,2 +1,13 @@
 src/*.o
 src/game
+*.swp
+doc/*.pdf
+doc/*.dvi
+doc/*.bbl
+doc/*.blg
+doc/*.toc
+doc/*.lof
+doc/*.lot
+doc/*.aux
+doc/*.log
+doc/*.d

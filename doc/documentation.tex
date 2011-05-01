@@ -35,6 +35,14 @@
 
     \section{Usage}
 
+    To start the game, compile it as normal and then run it with command-line
+    arguments corresponding to the map files which are to be loaded. For
+    example:
+
+    \verb!./game level1.txt level2.txt!
+
+    loads the game with the maps ``level1'' and ``level2'', in that order.
+
     The game starts with an initialisation screen, requiring the user to press
     the space bar to start. Once the game is running, pressing space again
     pauses. Pressing the escape key at any point exits the game.
@@ -58,14 +66,133 @@
     \section{Requirements}
 
     \subsection{Draw an Appropriate Background}
+
+    The background is drawn using the \verb!PacmanTileManager!, which is
+    a subclass of the provided \verb!TileManager! class.
+
+    The tile manager's state is loaded from the level's map file, which is
+    specified on the command line.
+
+    There are 5 types of tile in the game:
+
+    \begin{itemize}
+        \item Blank tile
+        \item Wall
+        \item Pellet
+        \item Power-up
+        \item Teleport
+    \end{itemize}
+
+    Pellets and power-ups can be collected by the player, and walls cannot be
+    moved onto. Teleport tiles move the player to the opposite side of the
+    screen (in the x-direction) if they are moved onto.
+
     \subsection{Have Moving Objects}
+
+    The \verb!PacmanObject! class, which subclasses the provided
+    \verb!DisplayableObject! class, provides an abstract moving object.
+    \verb!PacmanPlayer! and \verb!PacmanEnemy! both inherit from this class,
+    implementing their specific functionality.
+
+    The player object is controlled by the keyboard, whereas the enemy objects
+    are controlled by the AI. The enemies try to catch the player, and if they
+    succeed the player loses a life.
+
     \subsection{Have Interaction Between the Objects \& Background}
+
+    When the player moves onto a tile containing a pellet, a power-up or
+    a teleport, an action is performed.
+
+    When pellets are collected, the player's score is increased by 10 points
+    (20 points in power-up mode). Power-ups cause the enemy objects to run away
+    from the player, as the player can ``eat'' them. Also, the enemies change
+    colour to signify to the user that they are scattering.
+
     \subsection{Provide User Interaction}
+
+    The user controls the game entirely with the keyboard. The arrow keys
+    control the direction of the player, which works in much the same way as
+    in Pacman. The game can be paused by pressing the space bar.
+
+    When life is lost the game requires the user to press the space bar to
+    continue. The movable objects are reset to their original locations, but
+    the background stays the same (so pellets which have already been collected
+    are not reset).
+
+    When a level is completed, the player must again press the space bar to
+    continue---when the next map is loaded.
+
     \subsection{Provide AI-Controlled Objects}
+
+    The enemy objects are controlled by a relatively simple AI algorithm. The
+    AI is encapsulated in a separate class (\verb!PacmanAI!), which is provided
+    to the enemy object on instantiation. This allows the AI algorithm to be
+    swapped-out at runtime (i.e. the behaviour pattern).
+
+    The AI determines which of the X or Y co-ordinates has a greater difference
+    between the enemy and the player, and uses this information to move towards
+    the player. The decision is weighted such that the enemy is more likely to
+    go in the vertical (Y) direction.
+
+    When in ``scatter'' (power-up) mode, the enemy's decisions are simply
+    reversed. This has the effect of making the enemies run away from the
+    player.
+
     \subsection{Load Data From Files}
+
+    The map data is loaded from a file, with one file corresponding to each
+    level. The file format is a grid corresponding to each tile, with the
+    following characters:
+
+    \begin{itemize}
+        \item \verb! ! (space): blank tile
+        \item \verb!.! (dot): pellet
+        \item \verb!o!: power-up
+        \item \verb!w!: wall
+        \item \verb!t!: teleport
+        \item \verb!e!: enemy
+        \item \verb!p!: player (only one per map)
+    \end{itemize}
+
     \subsection{Save and Load Information}
+
+    Requirement not currently fulfilled.
+
     \subsection{Display Status Information on the Screen}
+
+    When in the ``main'' game state (i.e. the player is playing), the status
+    bar at the top of the screen shows the following information: lives left,
+    current level and number of points. This status information updates in
+    real-time as the game is played.
+
+    Also, when the game is in ``power-up'' mode, the enemies change colour.
+    This is the only indication to the player (apart from the fact that they
+    are running away!) When there is 2 seconds or less remaining in power-up
+    mode, the enemies flash to ward the player that the time has almost
+    expired.
+
     \subsection{Support Different States}
+
+    The game has a number of states:
+
+    \begin{enumerate}
+        \item Initialisation: the player is required to press the space bar to
+            begin playing the game
+        \item Main: the game is being played by the player
+        \item Power-up: the player has collected a power-up and the enemies are
+            vulnerable
+        \item Paused: the player has paused the game and is required to press
+            the space bar again to un-pause it
+        \item Level completed: the player has completed the level by collecting
+            all the pellets, and is required to press the space bar to continue
+            to the next level
+        \item Game completed: the player has completed the last level in the
+            game.
+        \item Life lost: the player has been caught by an enemy and lost
+            a life, and is required to press the space bar to continue
+        \item Game over: the player has lost all their lives and the game is
+            over
+    \end{enumerate}
 
     \section{Additional Comments}
 
