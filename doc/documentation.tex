@@ -33,15 +33,22 @@
     does not implement all of the functionality of the official game, all of
     the coursework requirements are fulfilled.
 
+    \begin{figure}[ht]
+        \begin{center}
+            \includegraphics[width=\textwidth]{class-diagram}
+        \end{center}
+        \caption{Class diagram for the Pacman game}
+        \label{fig:class-diagram}
+    \end{figure}
+
+    Figure \ref{fig:class-diagram} shows a class diagram of the game's objects
+    for reference.
+
     \section{Usage}
 
-    To start the game, compile it as normal and then run it with command-line
-    arguments corresponding to the map files which are to be loaded. For
-    example:
-
-    \verb!./game level1.txt level2.txt!
-
-    loads the game with the maps ``level1'' and ``level2'', in that order.
+    To start the game, compile it as normal and then run it with no arguments.
+    The game will search the \verb!maps/! directory for any maps which will be
+    loaded into the game in alphabetical order.
 
     The game starts with an initialisation screen, requiring the user to press
     the space bar to start. Once the game is running, pressing space again
@@ -63,6 +70,8 @@
     impossible due to a wall will delay that action until it is next available,
     in much the same way as the original Pacman game.
 
+    \newpage
+
     \section{Requirements}
 
     \subsection{Draw an Appropriate Background}
@@ -70,10 +79,8 @@
     The background is drawn using the \verb!PacmanTileManager!, which is
     a subclass of the provided \verb!TileManager! class.
 
-    The tile manager's state is loaded from the level's map file, which is
-    specified on the command line.
-
-    There are 5 types of tile in the game:
+    The tile manager's state is loaded from the level's map file. There are
+    5 types of tile in the game:
 
     \begin{itemize}
         \item Blank tile
@@ -138,6 +145,8 @@
     reversed. This has the effect of making the enemies run away from the
     player.
 
+    \newpage
+
     \subsection{Load Data From Files}
 
     The map data is loaded from a file, with one file corresponding to each
@@ -153,6 +162,12 @@
         \item \verb!e!: enemy
         \item \verb!p!: player (only one per map)
     \end{itemize}
+
+    The maps are loaded from the \verb!maps/! directory within \verb!src!. Map
+    file names are in the format \verb!level_%d.txt!, with the integer level
+    number being 1-9. Two maps are provided with the game (\verb!level_1.txt!
+    and \verb!level_2.txt!), though more can be added simply by creating more
+    map files.
 
     \subsection{Save and Load Information}
 
@@ -195,5 +210,26 @@
     \end{enumerate}
 
     \section{Additional Comments}
+
+    The game has been constructed to obey design principles where appropriate.
+    The \verb!PacmanObject! class contains an implementation for all the common
+    functionality between the two objects in the game (\verb!PacmanPlayer! and
+    \verb!PacmanEnemy!).
+    
+    Also, the \verb!PacmanEnemy! class uses an instance of \verb!PacmanAI! to
+    decide how to move around the map. A subclass of this type could be used to
+    implement a more advanced AI, which would alter the behaviour of the enemy
+    object.
+
+    One small feature worth noting is the ability of the player to reverse its
+    direction without finishing its current movement.  This offers movement
+    that is more similar to that of the original Pacman game, without resorting
+    to a more complex architecture.
+
+    If the user wishes to reverse the direction of their player object, the
+    game calculates how much the current movement has progressed thus far, and
+    reverses it. This is calculated within a subclass of the
+    \verb!MovementPosition! class, called \verb!PacmanMover! (within the
+    \verb!Reverse()! method), and results in a smooth reversal of direction.
 
 \end{document}

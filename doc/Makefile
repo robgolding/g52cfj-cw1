@@ -121,7 +121,7 @@ veryclean	: clean
 %.d	: %.tex
 	$(get_dependencies) ; echo $$deps ; \
 	$(getbibs) ; echo $$bibs ; \
-	$(geteps) ; echo $$epses ; \
+#	$(geteps) ; echo $$epses ; \
 	$(manconf) ; echo  $$mandeps  ;\
 	echo "$*.dvi $@ : $< $$deps $$bibs $$epses $$mandeps" > $@ 
 
