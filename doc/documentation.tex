@@ -232,4 +232,15 @@
     \verb!MovementPosition! class, called \verb!PacmanMover! (within the
     \verb!Reverse()! method), and results in a smooth reversal of direction.
 
+    Also worth note is the modified game time used for this program. When the
+    game is paused, time is still progressing---so when unpausing, objects
+    ``jump'' to where they were next heading for (as specified by their
+    ``mover'' object).
+    
+    To remedy this issue, the game uses a ``pause timer'', which is incremented
+    on every tick when the game is in a state other than \verb!stateMain!. The
+    game time can then be calculated by subtracting the pause timer from the
+    original game time. For the implementation, see the
+    \verb!GetModifiedTime()! method of \verb!PacmanMain!.
+
 \end{document}
