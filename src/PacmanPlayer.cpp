@@ -102,6 +102,7 @@ void PacmanPlayer::HandleMovementFinished(int iCurrentTime)
             break;
         case 9:
             MoveTo(abs(m_iMapX - m_pMainEngine->GetTileManager().GetMapWidth()) - 1, m_iMapY);
+            m_pMainEngine->Redraw(true);
             break;
     }
 
