@@ -43,19 +43,24 @@ void PacmanMain::AddLevel(char* pMapName)
     if (m_iNumLevels == 0)
     {
         m_ppLevels = new char*[++m_iNumLevels];
-        m_ppLevels[0] = pMapName;
+        m_ppLevels[0] = new char[strlen(pMapName)+1];
+        strcpy(m_ppLevels[0], pMapName);
     }
     else
     {
         char** ppNewLevels = new char*[m_iNumLevels+1];
         for (int i=0; i<m_iNumLevels; i++)
         {
-            ppNewLevels[i] = m_ppLevels[i];
+            ppNewLevels[i] = new char[strlen(m_ppLevels[i])+1];
+            strcpy(ppNewLevels[i], m_ppLevels[i]);
         }
-        ppNewLevels[m_iNumLevels++] = pMapName;
+        ppNewLevels[m_iNumLevels] = new char[strlen(pMapName)+1];
+        strcpy(ppNewLevels[m_iNumLevels], pMapName);
+        delete[] m_ppLevels;
         m_ppLevels = ppNewLevels;
+        m_iNumLevels++;
     }
-    printf("Added level. m_iNumLevels=%d\n", m_iNumLevels);
+    printf("Added level %d (%s)\n", m_iNumLevels, pMapName);
 }
 
 void PacmanMain::SetupBackgroundBuffer()
@@ -120,9 +125,11 @@ int PacmanMain::LoadCurrentLevel()
 {
     if (m_iCurrentLevel >= m_iNumLevels)
     {
-        printf("Cannot load level %d\n", m_iCurrentLevel);
+        printf("Cannot load level %d\n", m_iCurrentLevel+1);
         return 1;
     }
+
+    printf("Loading level %d (%s)\n", m_iCurrentLevel+1, m_ppLevels[m_iCurrentLevel]);
 
     int width = -1;
     int height = 0;
@@ -154,7 +161,7 @@ int PacmanMain::LoadCurrentLevel()
     }
     else
     {
-        printf("Cannot open map '%s'.\n", filename);
+        printf("Cannot open map '%s'\n", filename);
         return 1;
     }
 

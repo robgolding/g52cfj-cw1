@@ -3,6 +3,8 @@
 #include "BouncingBallMain.h"
 #include "PacmanMain.h"
 
+#include "sys/stat.h"
+
 #define BASE_SCREEN_WIDTH 800
 #define BASE_SCREEN_HEIGHT 600
 
@@ -21,9 +23,17 @@ int main(int argc, char *argv[])
     {
         PacmanMain oMain;
 
-        for (int i=1; i<argc; i++)
+        char* fmt = "maps/level_%d.txt";
+        char filename[25];
+        struct stat stFileInfo;
+
+        for (int i=1; i<10; i++)
         {
-            oMain.AddLevel(argv[i]);
+            sprintf(filename, fmt, i);
+            if (stat(filename, &stFileInfo) == 0)
+            {
+                oMain.AddLevel(filename);
+            }
         }
 
         char buf[1024];
